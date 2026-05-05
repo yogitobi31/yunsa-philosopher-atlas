@@ -4,73 +4,52 @@ import { ComparisonLab } from "@/components/ComparisonLab";
 import { ExamTrapTraining } from "@/components/ExamTrapTraining";
 import { ThoughtMap } from "@/src/components/ThoughtMap";
 import { philosophers } from "@/data/philosophers";
-import { VisualStudySections, OneCutSummaryCard } from "@/components/VisualStudySections";
-
-const features = [
-  { id: "atlas", title: "철학자 도감", desc: "핵심 사상가를 카드처럼 탐색", mark: "仁" },
-  { id: "lab", title: "사상 비교 실험실", desc: "헷갈리는 철학자를 한눈에 비교", mark: "VS" },
-  { id: "trap", title: "시험 함정 훈련소", desc: "내신·수능식 선지를 판별", mark: "!" },
-  { id: "map", title: "사상 지도", desc: "사상의 흐름과 관계를 연결", mark: "◎" },
-];
+import { VisualStudySections } from "@/components/VisualStudySections";
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-x-clip bg-hero-gradient">
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
-        <section className="hero-panel relative overflow-hidden rounded-[2rem] border border-white/10 p-6 md:p-10">
+    <main className="min-h-screen overflow-x-clip">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
+        <section className="hero-panel relative overflow-hidden rounded-[2.2rem] border border-white/15 px-6 py-10 md:px-10 md:py-14">
           <div className="hero-network" />
-          <div className="pointer-events-none absolute -left-20 top-8 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute right-10 top-20 h-44 w-44 rounded-full bg-violet-500/20 blur-3xl" />
-          <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <p className="text-sm font-medium text-atlas-cyan">철학자 아틀라스</p>
-              <h1 className="mt-2 text-4xl font-bold leading-tight md:text-6xl">윤리와 사상 철학자 아틀라스</h1>
-              <p className="mt-4 max-w-2xl text-lg text-slate-200">철학자를 외우는 앱이 아니라, 사상의 관계를 이해하는 앱</p>
-              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">선지의 키워드를 분절해서 외우는 대신, 철학자의 핵심 기준·인간관·판단 원리를 연결해 시험 함정을 피하도록 설계했습니다.</p>
-              <div className="mt-7 flex flex-wrap gap-3 text-sm">
-                <Link href="#atlas" className="rounded-xl bg-atlas-accent px-5 py-3 font-medium transition hover:-translate-y-0.5 hover:shadow-premium">철학자 도감 탐색</Link>
-                <Link href="#lab" className="rounded-xl border border-white/20 bg-white/5 px-5 py-3 transition hover:-translate-y-0.5 hover:border-atlas-cyan/50">비교 실험실 시작</Link>
+              <p className="eyebrow">Premium Study Atlas</p>
+              <h1 className="mt-4 text-5xl font-semibold leading-[1.08] tracking-tight md:text-7xl">윤리와 사상 철학자 아틀라스</h1>
+              <p className="mt-6 text-xl text-slate-200">철학자를 외우는 앱이 아니라, 사상의 관계를 이해하는 앱</p>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300">철학자의 핵심 관점, 비교 포인트, 시험 함정을 한 화면에서 정리합니다.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="#atlas" className="rounded-full bg-atlas-cyan/85 px-6 py-3 text-sm font-medium text-slate-950 transition hover:-translate-y-0.5">철학자 도감 보기</Link>
+                <Link href="#lab" className="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm text-slate-100 transition hover:border-white/40">비교 실험실 시작</Link>
               </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-              {philosophers.slice(0, 4).map((p) => (
-                <div key={p.id} className={`floating-card relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r ${p.accent} p-4 backdrop-blur`}>
-                  <span className="absolute -right-2 -top-4 text-6xl font-black text-white/15">{p.symbol}</span>
-                  <p className="text-xs text-slate-200">{p.period}</p>
-                  <p className="mt-1 font-semibold">{p.name}</p>
-                  <p className="mt-1 text-sm text-slate-100">{p.quoteLike}</p>
-                </div>
-              ))}
+            <div className="premium-card relative overflow-hidden p-6">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(124,205,231,0.2),transparent_42%)]" />
+              <div className="relative grid gap-4">
+                {philosophers.slice(0, 3).map((p) => (
+                  <div key={p.id} className={`rounded-2xl border border-white/15 bg-gradient-to-r ${p.accent} p-4`}>
+                    <p className="text-xs text-slate-200">{p.period}</p>
+                    <p className="mt-1 text-xl font-semibold tracking-tight">{p.symbol} {p.name}</p>
+                    <p className="mt-1 text-sm text-slate-100">{p.oneLine}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="mt-6 rounded-2xl border border-atlas-cyan/40 bg-white/[0.06] p-5">
-          <h2 className="text-xl font-bold">이번 버전에서 달라진 점</h2>
-          <ul className="mt-3 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
-            <li>• 철학자 시각 카드 추가</li>
-            <li>• 한국 윤리 · 사회사상 철학자 확장</li>
-            <li>• 헷갈리는 철학자 비교 카드 추가</li>
-            <li>• 내용 검수 상태 표시 추가</li>
+        <section className="section-shell mt-8">
+          <p className="eyebrow">Release Notes</p>
+          <h2 className="section-title mt-3">이번 버전에서 달라진 점</h2>
+          <ul className="mt-4 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
+            <li>철학자 시각 카드 추가</li><li>한국 윤리 · 사회사상 철학자 확장</li><li>헷갈리는 철학자 비교 카드 추가</li><li>내용 검수 상태 표시 추가</li>
           </ul>
         </section>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {features.map((f) => (
-            <Link key={f.title} href={`#${f.id}`} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition duration-300 hover:-translate-y-1 hover:border-atlas-cyan/60 hover:shadow-premium">
-              <span className="absolute -right-3 -top-4 text-6xl font-black text-white/10 transition group-hover:text-atlas-cyan/25">{f.mark}</span>
-              <h3 className="mt-2 text-lg font-semibold">{f.title}</h3>
-              <p className="mt-2 text-sm text-slate-300">{f.desc}</p>
-              <p className="mt-4 text-xs text-atlas-cyan">바로 이동</p>
-            </Link>
-          ))}
-        </div>
 
         <div className="mt-14 space-y-10 md:space-y-14">
           <VisualStudySections />
           <AtlasSection />
           <ComparisonLab />
-          <section className="space-y-3"><h2 className="text-2xl font-bold">한 컷 요약</h2><p className="text-sm text-slate-300">철학자 한 명을 10초 안에 기억하는 카드</p><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><OneCutSummaryCard id="confucius" /><OneCutSummaryCard id="laozi" /><OneCutSummaryCard id="kant" /><OneCutSummaryCard id="bentham" /><OneCutSummaryCard id="yi_hwang" /><OneCutSummaryCard id="yi_i" /><OneCutSummaryCard id="hobbes" /><OneCutSummaryCard id="rawls" /></div></section>
           <ThoughtMap />
           <ExamTrapTraining />
         </div>
