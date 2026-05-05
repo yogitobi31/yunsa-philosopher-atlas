@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { philosophers } from "@/data/philosophers";
+import { PhilosopherAvatar } from "@/src/components/philosopher-visuals/PhilosopherAvatar";
 
 export default async function PhilosopherDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -13,7 +14,7 @@ export default async function PhilosopherDetail({ params }: { params: Promise<{ 
         <Link href="/" className="inline-flex rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-atlas-cyan transition hover:border-atlas-cyan/60">← 홈으로 돌아가기</Link>
         <div className={`relative mt-4 overflow-hidden rounded-3xl bg-gradient-to-r ${p.accent} p-6`}>
           <span className="absolute -right-3 top-0 text-9xl font-black text-white/15">{p.symbol}</span>
-          <p className="text-sm text-slate-200">{p.period} · {p.region}</p>
+          <div className="mb-3"><PhilosopherAvatar id={p.id} name={p.name} /></div><p className="text-sm text-slate-200">{p.period} · {p.region}</p>
           <h1 className="mt-1 text-4xl font-bold">{p.name}</h1>
           <p className="mt-2 text-lg text-slate-100">{p.oneLine}</p>
           <p className="mt-3 text-sm italic text-slate-100">“{p.quoteLike}”</p>
@@ -26,7 +27,7 @@ export default async function PhilosopherDetail({ params }: { params: Promise<{ 
           <Info title="핵심 정체성" text={p.keyStandard} /><Info title="인간관" text={p.viewOfHuman} />
           <Info title="윤리 판단 기준" text={p.ethics} /><Info title="대표 개념" text={p.coreConcepts.join(", ")} />
           <Info title="시험 함정" text={p.examTraps.join(" / ")} /><Info title="자주 나오는 선지" text={p.frequentStatements.join(" / ")} />
-          <Info title="비교 추천" text={(p.confusionPair ? `${p.confusionPair}와 우선 비교` : "교재 대비 비교 확장") + ` · ${p.compareWith.join(", ")}`} /><Info title="30초 요약" text={p.summary30} />
+          <Info title="비교 추천" text={(p.confusionPair ? `${p.confusionPair}와 우선 비교` : "교재 대비 비교 확장") + ` · ${p.compareWith.join(", ")}`} /><Info title="30초 요약" text={p.summary30} /><Info title="검수 상태" text={`${p.reviewStatus} · ${p.lastReviewedAt} · ${p.reviewNotes}`} />
         </div>
       </div>
     </main>
