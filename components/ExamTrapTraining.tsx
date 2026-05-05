@@ -12,10 +12,14 @@ const questions: Question[] = [
 
 export function ExamTrapTraining() {
   const [picked, setPicked] = useState<Record<string, string>>({});
-  return <section id="trap" className="rounded-3xl glass p-6 md:p-8"><p className="text-sm text-atlas-rose">시험 함정 훈련소</p><h2 className="mt-1 text-2xl font-bold">이 선지는 누구의 입장에 가까울까?</h2><div className="mt-5 space-y-4">{questions.map((q) => {
+  return <section id="trap" className="rounded-3xl glass p-6 md:p-8"><p className="text-sm text-atlas-rose">시험 함정 훈련소</p><h2 className="mt-1 text-2xl font-bold">이 선지는 누구의 입장에 가까울까?</h2><p className="mt-2 text-sm text-slate-300">선지를 외우지 말고, 어떤 사상가의 판단 기준인지 먼저 잡아보세요.</p><div className="mt-5 space-y-4">{questions.map((q) => {
     const selected = picked[q.id];
     const judged = !!selected;
     const correct = selected === q.answer;
-    return <article key={q.id} className="rounded-2xl border border-white/10 bg-white/5 p-5"><p className="font-medium leading-relaxed">{q.statement}</p><div className="mt-4 flex flex-wrap gap-2">{q.choices.map((choice) => <button key={choice} onClick={() => setPicked((prev) => ({ ...prev, [q.id]: choice }))} className="rounded-full border border-white/20 bg-slate-900/60 px-4 py-2 text-sm transition hover:border-atlas-cyan/70">{choice}</button>)}</div>{judged && <div className={`mt-4 rounded-xl border p-3 text-sm ${correct ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100" : "border-rose-400/40 bg-rose-500/10 text-rose-100"}`}><p>{correct ? "정답!" : `오답 · 정답: ${q.answer}`}</p><p className="mt-1">해설: {q.explanation}</p><p className="mt-1">관련 철학자: {q.answer}</p><p className="mt-1">함정 포인트: {q.trapPoint}</p></div>}</article>;
+    return <article key={q.id} className="rounded-2xl border border-white/15 bg-white/5 p-5"><p className="rounded-xl border border-white/10 bg-slate-900/60 p-4 font-medium leading-relaxed">“{q.statement}”</p><div className="mt-4 flex flex-wrap gap-2">{q.choices.map((choice) => {
+      const isSelected = selected === choice;
+      const className = judged && choice === q.answer ? "border-emerald-400/50 bg-emerald-500/15" : judged && isSelected && !correct ? "border-rose-400/50 bg-rose-500/15" : isSelected ? "border-atlas-cyan/60 bg-atlas-cyan/15" : "border-white/20 bg-slate-900/60";
+      return <button key={choice} onClick={() => setPicked((prev) => ({ ...prev, [q.id]: choice }))} className={`rounded-full border px-4 py-2 text-sm transition ${className}`}>{choice}</button>;
+    })}</div>{judged && <div className={`mt-4 rounded-xl border p-3 text-sm ${correct ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100" : "border-rose-400/40 bg-rose-500/10 text-rose-100"}`}><p>{correct ? "정답!" : `오답 · 정답: ${q.answer}`}</p><p className="mt-1">해설: {q.explanation}</p><p className="mt-2 inline-flex rounded-full border border-white/25 px-3 py-1 text-xs">관련 철학자: {q.answer}</p><p className="mt-2 inline-flex rounded-full border border-amber-300/40 bg-amber-400/15 px-3 py-1 text-xs text-amber-100">함정 포인트: {q.trapPoint}</p></div>}</article>;
   })}</div></section>;
 }
