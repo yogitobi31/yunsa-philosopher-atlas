@@ -8,43 +8,8 @@ export default async function PhilosopherDetail({ params }: { params: Promise<{ 
   const p = philosophers.find((item) => item.id === id);
   if (!p) return notFound();
 
-  return (
-    <main className="min-h-screen bg-hero-gradient px-4 py-8 md:px-6 md:py-10">
-      <div className="mx-auto max-w-5xl rounded-3xl glass p-6 md:p-10" style={{ wordBreak: "keep-all", whiteSpace: "normal" }}>
-        <Link href="/" className="inline-flex rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-atlas-cyan transition hover:border-atlas-cyan/60">← 홈으로 돌아가기</Link>
-        <div className={`relative mt-4 overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-r ${p.accent} p-6`}>
-          <span className="absolute -right-6 -top-8 text-[11rem] font-black text-white/10">{p.symbol}</span>
-          <div className="relative z-10 flex min-w-0 flex-col gap-4 md:flex-row md:items-start">
-            <PhilosopherAvatar id={p.id} name={p.name} size={124} />
-            <div className="min-w-0">
-              <p className="text-sm text-slate-200">{p.period} · {p.region}</p>
-              <h1 className="mt-1 text-4xl font-bold">{p.name}</h1>
-              <p className="mt-2 text-lg text-slate-100">{p.oneLine}</p>
-              <p className="mt-3 text-sm italic text-slate-100">“{p.quoteLike}”</p>
-              <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1">검수: {p.reviewStatus}</span>
-                {p.teacherChecked && <span className="rounded-full border border-emerald-300/50 bg-emerald-300/15 px-3 py-1">교사 확인</span>}
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">{p.coreConcepts.map((tag) => <span key={tag} className="rounded-full border border-white/30 px-3 py-1 text-xs">{tag}</span>)}</div>
-              {p.confusionPair && <p className="mt-3 inline-flex rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs">헷갈리는 상대: {p.confusionPair}</p>}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 rounded-2xl border border-emerald-300/40 bg-emerald-300/10 p-4 text-sm text-emerald-100"><p className="font-semibold">반드시 알아야 할 것</p><ul className="mt-2 list-disc pl-5">{p.mustKnow.map((item) => <li key={item}>{item}</li>)}</ul></div>
-        <div className="mt-3 rounded-2xl border border-amber-300/40 bg-amber-300/10 p-4 text-sm text-amber-100"><p className="font-semibold">시험 경고</p><p className="mt-1">{p.examWarning}</p></div>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <Info title="핵심 정체성" text={p.keyStandard} /><Info title="인간관" text={p.viewOfHuman} />
-          <Info title="윤리 판단 기준" text={p.ethics} /><Info title="대표 개념" text={p.coreConcepts.join(", ")} />
-          <Info title="시험 함정" text={p.examTraps.join(" / ")} /><Info title="자주 나오는 선지" text={p.frequentStatements.join(" / ")} />
-          <Info title="비교 추천" text={(p.confusionPair ? `${p.confusionPair}와 우선 비교` : "교재 대비 비교 확장") + ` · ${p.compareWith.join(", ")}`} /><Info title="30초 요약" text={p.summary30} /><Info title="검수 상태" text={`${p.reviewStatus} · ${p.lastReviewedAt} · ${p.reviewNotes}`} /><Info title="교육과정 태그" text={p.curriculumTags.join(", ")} />
-        </div>
-        <p className="mt-4 text-xs text-slate-400">출처 메모: {p.sourceNote}</p>
-      </div>
-    </main>
-  );
+  return <main className="min-h-screen px-4 py-8 md:px-8 md:py-12"><div className="mx-auto max-w-5xl"><Link href="/" className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-atlas-cyan">← 홈으로 돌아가기</Link><section className="section-shell mt-4"><div className={`relative overflow-hidden rounded-[2rem] border border-white/15 bg-gradient-to-r ${p.accent} p-6 md:p-8`}><div className="flex flex-col gap-4 md:flex-row md:items-center"><PhilosopherAvatar id={p.id} name={p.name} size={120} /><div><p className="text-sm text-slate-200">{p.period} · {p.region}</p><h1 className="mt-1 text-4xl font-semibold">{p.symbol} {p.name}</h1><p className="mt-2 text-lg text-slate-100">{p.oneLine}</p><p className="mt-3 text-sm">검수: {p.reviewStatus} {p.teacherChecked ? "· 교사 확인" : ""}</p></div></div></div>
+  <div className="mt-6 space-y-4"><Block title="반드시 알아야 할 것" text={p.mustKnow.join(" / ")} /><Block title="핵심 정체성" text={p.keyStandard} /><Block title="인간관" text={p.viewOfHuman} /><Block title="윤리 판단 기준" text={p.ethics} /><Block title="대표 개념" text={p.coreConcepts.join(", ")} /><Block title="시험 경고" text={p.examWarning} /><Block title="자주 나오는 선지" text={p.frequentStatements.join(" / ")} /><Block title="헷갈리는 상대" text={p.confusionPair || "비교 확장 필요"} /><Block title="30초 요약" text={p.summary30} /><Block title="sourceNote" text={p.sourceNote} /></div></section></div></main>;
 }
 
-function Info({ title, text }: { title: string; text: string }) {
-  return <article className="rounded-2xl border border-white/10 bg-white/5 p-4"><h2 className="text-sm text-atlas-cyan">{title}</h2><p className="mt-2 text-sm leading-relaxed text-slate-100">{text}</p></article>;
-}
+function Block({ title, text }: { title: string; text: string }) { return <article className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"><h2 className="text-sm text-atlas-cyan">{title}</h2><p className="mt-2 text-sm leading-relaxed text-slate-100">{text}</p></article>; }

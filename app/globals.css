@@ -4,10 +4,35 @@
 
 :root { color-scheme: dark; }
 html { scroll-behavior: smooth; }
-body { @apply bg-atlas-bg text-slate-100 antialiased; overflow-x:hidden; }
+body {
+  @apply antialiased;
+  background: radial-gradient(circle at 15% 0%, rgba(91, 156, 214, 0.12), transparent 35%), radial-gradient(circle at 85% 10%, rgba(165, 134, 211, 0.1), transparent 40%), #060910;
+  color: #edf3ff;
+  overflow-x: hidden;
+  word-break: keep-all;
+}
 
-.glass { @apply border border-white/10 bg-white/5 backdrop-blur-lg; }
-.hero-panel { background: linear-gradient(140deg, rgba(16,26,51,.72), rgba(12,18,40,.66)); box-shadow: 0 28px 80px rgba(8,10,24,.45); }
-.hero-network { position:absolute; inset:0; background-image: radial-gradient(circle at 15% 20%, rgba(124,108,255,.22), transparent 30%), radial-gradient(circle at 80% 15%, rgba(69,215,255,.18), transparent 32%), radial-gradient(circle at 60% 75%, rgba(250,204,21,.12), transparent 32%); }
-.floating-card { animation: floatUp 4.8s ease-in-out infinite; }
-@keyframes floatUp { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-6px);} }
+.glass {
+  @apply border border-white/10 bg-white/[0.045] backdrop-blur-2xl;
+  box-shadow: 0 20px 60px rgba(7, 10, 20, 0.45), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.section-shell { @apply rounded-[2rem] p-6 md:p-8 lg:p-10 glass; }
+.section-title { @apply text-3xl md:text-4xl font-semibold tracking-tight leading-tight; }
+.section-subtitle { @apply mt-3 text-sm md:text-base text-slate-300 leading-relaxed; }
+.eyebrow { @apply text-xs uppercase tracking-[0.22em] text-atlas-cyan/80 font-medium; }
+
+.hero-panel {
+  background: linear-gradient(140deg, rgba(16,22,38,.72), rgba(10,15,30,.6));
+  box-shadow: 0 30px 80px rgba(2, 6, 16, .62);
+}
+.hero-network {
+  position:absolute; inset:0;
+  background-image: radial-gradient(circle at 18% 24%, rgba(115,180,224,.17), transparent 30%), radial-gradient(circle at 82% 13%, rgba(142,116,196,.16), transparent 34%), radial-gradient(circle at 56% 80%, rgba(219,184,125,.10), transparent 38%);
+}
+
+.premium-card { @apply rounded-3xl border border-white/10 bg-white/[0.035] backdrop-blur-xl; }
+
+@media (max-width: 768px) {
+  .section-title { @apply text-2xl; }
+}
