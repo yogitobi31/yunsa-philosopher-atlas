@@ -28,9 +28,9 @@ export default function Home() {
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(124,205,231,0.2),transparent_42%)]" />
               <div className="relative grid gap-4">
                 {philosophers.slice(0, 3).map((p) => (
-                  <div key={p.id} className={`rounded-2xl border border-white/15 bg-gradient-to-r ${p.accent} p-4`}>
+                  <div key={p.id} className={`rounded-2xl border border-white/15 bg-white/[0.04] p-4`}>
                     <p className="text-xs text-slate-200">{p.period}</p>
-                    <p className="mt-1 text-xl font-semibold tracking-tight">{p.symbol} {p.name}</p>
+                    <p className="mt-1 text-xl font-semibold tracking-tight">{p.hanjaOrSymbol} {p.name}</p>
                     <p className="mt-1 text-sm text-slate-100">{p.oneLine}</p>
                   </div>
                 ))}
