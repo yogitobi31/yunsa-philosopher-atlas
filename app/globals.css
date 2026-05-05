@@ -6,14 +6,14 @@
 html { scroll-behavior: smooth; }
 body {
   @apply antialiased;
-  background: radial-gradient(circle at 15% 0%, rgba(91, 156, 214, 0.12), transparent 35%), radial-gradient(circle at 85% 10%, rgba(165, 134, 211, 0.1), transparent 40%), #060910;
+  background: radial-gradient(circle at 15% 0%, rgba(91, 156, 214, 0.14), transparent 35%), radial-gradient(circle at 85% 10%, rgba(165, 134, 211, 0.11), transparent 40%), #0a111b;
   color: #edf3ff;
   overflow-x: hidden;
   word-break: keep-all;
 }
 
 .glass {
-  @apply border border-white/10 bg-white/[0.045] backdrop-blur-2xl;
+  @apply border border-white/15 bg-white/[0.06] backdrop-blur-2xl;
   box-shadow: 0 20px 60px rgba(7, 10, 20, 0.45), inset 0 1px 0 rgba(255,255,255,.06);
 }
 
@@ -31,7 +31,9 @@ body {
   background-image: radial-gradient(circle at 18% 24%, rgba(115,180,224,.17), transparent 30%), radial-gradient(circle at 82% 13%, rgba(142,116,196,.16), transparent 34%), radial-gradient(circle at 56% 80%, rgba(219,184,125,.10), transparent 38%);
 }
 
-.premium-card { @apply rounded-3xl border border-white/10 bg-white/[0.035] backdrop-blur-xl; }
+.premium-card { @apply rounded-3xl border border-white/15 bg-white/[0.055] backdrop-blur-xl; }
+
+.atlas-card-glow:hover { box-shadow: 0 16px 40px rgba(6, 182, 212, 0.14), inset 0 1px 0 rgba(255,255,255,.08); }
 
 @media (max-width: 768px) {
   .section-title { @apply text-2xl; }
