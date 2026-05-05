@@ -2,14 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: dark;
-}
+:root { color-scheme: dark; }
+html { scroll-behavior: smooth; }
+body { @apply bg-atlas-bg text-slate-100 antialiased; overflow-x:hidden; }
 
-body {
-  @apply bg-atlas-bg text-slate-100 antialiased;
-}
-
-.glass {
-  @apply border border-white/10 bg-white/5 backdrop-blur-lg;
-}
+.glass { @apply border border-white/10 bg-white/5 backdrop-blur-lg; }
+.hero-panel { background: linear-gradient(140deg, rgba(16,26,51,.72), rgba(12,18,40,.66)); box-shadow: 0 28px 80px rgba(8,10,24,.45); }
+.hero-network { position:absolute; inset:0; background-image: radial-gradient(circle at 15% 20%, rgba(124,108,255,.22), transparent 30%), radial-gradient(circle at 80% 15%, rgba(69,215,255,.18), transparent 32%), radial-gradient(circle at 60% 75%, rgba(250,204,21,.12), transparent 32%); }
+.floating-card { animation: floatUp 4.8s ease-in-out infinite; }
+@keyframes floatUp { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-6px);} }
