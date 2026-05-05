@@ -10,23 +10,28 @@ export default async function PhilosopherDetail({ params }: { params: Promise<{ 
 
   return (
     <main className="min-h-screen bg-hero-gradient px-4 py-8 md:px-6 md:py-10">
-      <div className="mx-auto max-w-5xl rounded-3xl glass p-6 md:p-10">
+      <div className="mx-auto max-w-5xl rounded-3xl glass p-6 md:p-10" style={{ wordBreak: "keep-all", whiteSpace: "normal" }}>
         <Link href="/" className="inline-flex rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-atlas-cyan transition hover:border-atlas-cyan/60">← 홈으로 돌아가기</Link>
-        <div className={`relative mt-4 overflow-hidden rounded-3xl bg-gradient-to-r ${p.accent} p-6`}>
-          <span className="absolute -right-3 top-0 text-9xl font-black text-white/15">{p.symbol}</span>
-          <div className="mb-3"><PhilosopherAvatar id={p.id} name={p.name} size={132} /></div><p className="text-sm text-slate-200">{p.period} · {p.region}</p>
-          <h1 className="mt-1 text-4xl font-bold">{p.name}</h1>
-          <p className="mt-2 text-lg text-slate-100">{p.oneLine}</p>
-          <p className="mt-3 text-sm italic text-slate-100">“{p.quoteLike}”</p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1">검수: {p.reviewStatus}</span>
-            {p.teacherChecked && <span className="rounded-full border border-emerald-300/50 bg-emerald-300/15 px-3 py-1">교사 확인</span>}
+        <div className={`relative mt-4 overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-r ${p.accent} p-6`}>
+          <span className="absolute -right-6 -top-8 text-[11rem] font-black text-white/10">{p.symbol}</span>
+          <div className="relative z-10 flex min-w-0 flex-col gap-4 md:flex-row md:items-start">
+            <PhilosopherAvatar id={p.id} name={p.name} size={124} />
+            <div className="min-w-0">
+              <p className="text-sm text-slate-200">{p.period} · {p.region}</p>
+              <h1 className="mt-1 text-4xl font-bold">{p.name}</h1>
+              <p className="mt-2 text-lg text-slate-100">{p.oneLine}</p>
+              <p className="mt-3 text-sm italic text-slate-100">“{p.quoteLike}”</p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1">검수: {p.reviewStatus}</span>
+                {p.teacherChecked && <span className="rounded-full border border-emerald-300/50 bg-emerald-300/15 px-3 py-1">교사 확인</span>}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">{p.coreConcepts.map((tag) => <span key={tag} className="rounded-full border border-white/30 px-3 py-1 text-xs">{tag}</span>)}</div>
+              {p.confusionPair && <p className="mt-3 inline-flex rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs">헷갈리는 상대: {p.confusionPair}</p>}
+            </div>
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">{p.coreConcepts.map((tag) => <span key={tag} className="rounded-full border border-white/30 px-3 py-1 text-xs">{tag}</span>)}</div>
-          {p.confusionPair && <p className="mt-3 inline-flex rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs">헷갈리는 상대: {p.confusionPair}</p>}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-emerald-300/40 bg-emerald-300/10 p-4 text-sm text-emerald-100"><p className="font-semibold">반드시 알아야 할 것</p><ul className="mt-2 list-disc pl-5">{p.mustKnow.map((item)=><li key={item}>{item}</li>)}</ul></div>
+        <div className="mt-5 rounded-2xl border border-emerald-300/40 bg-emerald-300/10 p-4 text-sm text-emerald-100"><p className="font-semibold">반드시 알아야 할 것</p><ul className="mt-2 list-disc pl-5">{p.mustKnow.map((item) => <li key={item}>{item}</li>)}</ul></div>
         <div className="mt-3 rounded-2xl border border-amber-300/40 bg-amber-300/10 p-4 text-sm text-amber-100"><p className="font-semibold">시험 경고</p><p className="mt-1">{p.examWarning}</p></div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <Info title="핵심 정체성" text={p.keyStandard} /><Info title="인간관" text={p.viewOfHuman} />

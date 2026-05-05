@@ -19,7 +19,7 @@ export function AtlasSection() {
           {regionFilters.map((r) => <button key={r} onClick={() => setFilter(r)} className={`rounded-full px-4 py-2 text-sm ${filter===r ? "bg-atlas-accent text-white" : "bg-white/10 text-slate-300"}`}>{r}</button>)}
         </div>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
         {list.map((philosopher) => <PhilosopherCard key={philosopher.id} philosopher={philosopher} />)}
       </div>
     </section>
