@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AtlasSection } from "@/components/AtlasSection";
 import { ComparisonLab } from "@/components/ComparisonLab";
 import { ExamTrapTraining } from "@/components/ExamTrapTraining";
+import { ThoughtMap } from "@/src/components/ThoughtMap";
 import { philosophers } from "@/data/philosophers";
 
 const features = [
@@ -57,17 +58,8 @@ export default function Home() {
         <div className="mt-14 space-y-10 md:space-y-14">
           <AtlasSection />
           <ComparisonLab />
+          <ThoughtMap />
           <ExamTrapTraining />
-          <section id="map" className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
-            <p className="text-sm text-atlas-cyan">사상 지도</p>
-            <h2 className="mt-1 text-2xl font-bold">사상의 흐름을 선으로 보는 연결 지도</h2>
-            <p className="mt-2 text-sm text-slate-300">곧 추가 예정 · 핵심 계보를 인터랙티브하게 확장합니다.</p>
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {["공자 → 맹자 → 주희 → 이황", "공자 → 순자 → 한비자", "소크라테스 → 플라톤 → 아리스토텔레스", "홉스 → 로크 → 루소", "칸트 → 롤스"].map((line) => (
-                <div key={line} className="rounded-xl border border-white/15 bg-slate-900/50 p-4 text-sm text-slate-200">{line}</div>
-              ))}
-            </div>
-          </section>
         </div>
       </div>
     </main>
