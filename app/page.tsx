@@ -4,6 +4,7 @@ import { ComparisonLab } from "@/components/ComparisonLab";
 import { ExamTrapTraining } from "@/components/ExamTrapTraining";
 import { ThoughtMap } from "@/src/components/ThoughtMap";
 import { philosophers } from "@/data/philosophers";
+import { VisualStudySections, OneCutSummaryCard } from "@/components/VisualStudySections";
 
 const features = [
   { id: "atlas", title: "철학자 도감", desc: "핵심 사상가를 카드처럼 탐색", mark: "仁" },
@@ -57,7 +58,9 @@ export default function Home() {
 
         <div className="mt-14 space-y-10 md:space-y-14">
           <AtlasSection />
+          <VisualStudySections />
           <ComparisonLab />
+          <section className="grid gap-4 md:grid-cols-3"><OneCutSummaryCard id="mencius" /><OneCutSummaryCard id="xunzi" /><OneCutSummaryCard id="rawls" /></section>
           <ThoughtMap />
           <ExamTrapTraining />
         </div>
