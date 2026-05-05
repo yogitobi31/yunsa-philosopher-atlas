@@ -5,6 +5,7 @@ import { ExamTrapTraining } from "@/components/ExamTrapTraining";
 import { ThoughtMap } from "@/src/components/ThoughtMap";
 import { philosophers } from "@/data/philosophers";
 import { VisualStudySections } from "@/components/VisualStudySections";
+import { IssueLearningSection } from "@/src/components/IssueLearningSection";
 
 export default function Home() {
   return (
@@ -48,6 +49,7 @@ export default function Home() {
 
         <div className="mt-14 space-y-10 md:space-y-14">
           <VisualStudySections />
+          <IssueLearningSection />
           <AtlasSection />
           <ComparisonLab />
           <ThoughtMap />
