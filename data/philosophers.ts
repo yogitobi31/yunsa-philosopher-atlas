@@ -23,12 +23,27 @@ export type Philosopher = {
   trapPreview: string;
   confusionPair?: string;
   reviewStatus: ReviewStatus;
+  teacherChecked: boolean;
+  sourceNote: string;
+  curriculumTags: string[];
+  mustKnow: string[];
+  examWarning: string;
   reviewNotes: string;
   lastReviewedAt: string;
   sourceRefs: string[];
 };
 
-const reviewed = { reviewStatus: "검수완료" as const, reviewNotes: "교과 핵심어 기준 교차검토", lastReviewedAt: "2026-05-05", sourceRefs: ["고등학교 윤리와 사상 교과 핵심 개념"] };
+const reviewed = {
+  reviewStatus: "검수완료" as const,
+  teacherChecked: true,
+  sourceNote: "고등학교 윤리와 사상 공통 개념어 기준 요약",
+  curriculumTags: ["윤리와사상", "수능연계", "핵심개념"],
+  mustKnow: ["핵심 기준 1개", "비교 대상 1명", "대표 개념 3개"],
+  examWarning: "개념 이름이 비슷한 사상가와 구분해서 기억하세요.",
+  reviewNotes: "교과 핵심어 기준 교차검토",
+  lastReviewedAt: "2026-05-05",
+  sourceRefs: ["고등학교 윤리와 사상 교과 핵심 개념"],
+};
 
 export const philosophers: Philosopher[] = [
   { id:"confucius", name:"공자", region:"동양", period:"춘추", category:["유가"], oneLine:"인과 예로 관계 질서를 세우는 유가", coreConcepts:["인","예","정명"], viewOfHuman:"관계 속 수양 가능한 존재", ethics:"수기치인", politics:"덕치", keyStandard:"역할의 적절성", examTraps:["예=형식주의 오해"], frequentStatements:["정명"], compareWith:["맹자","순자"], summary30:"인(仁)을 예(禮)로 실천한다.", difficulty:2, symbol:"仁", accent:"from-amber-300/30 to-orange-500/20", quoteLike:"관계 속에서 인간다움", trapPreview:"무위자연과 구분", confusionPair:"노자", ...reviewed },

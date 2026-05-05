@@ -45,6 +45,16 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="mt-6 rounded-2xl border border-atlas-cyan/40 bg-white/[0.06] p-5">
+          <h2 className="text-xl font-bold">이번 버전에서 달라진 점</h2>
+          <ul className="mt-3 grid gap-2 text-sm text-slate-200 md:grid-cols-2">
+            <li>• 철학자 시각 카드 추가</li>
+            <li>• 한국 윤리 · 사회사상 철학자 확장</li>
+            <li>• 헷갈리는 철학자 비교 카드 추가</li>
+            <li>• 내용 검수 상태 표시 추가</li>
+          </ul>
+        </section>
+
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {features.map((f) => (
             <Link key={f.title} href={`#${f.id}`} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition duration-300 hover:-translate-y-1 hover:border-atlas-cyan/60 hover:shadow-premium">
@@ -57,10 +67,10 @@ export default function Home() {
         </div>
 
         <div className="mt-14 space-y-10 md:space-y-14">
-          <AtlasSection />
           <VisualStudySections />
+          <AtlasSection />
           <ComparisonLab />
-          <section className="grid gap-4 md:grid-cols-3"><OneCutSummaryCard id="mencius" /><OneCutSummaryCard id="xunzi" /><OneCutSummaryCard id="rawls" /></section>
+          <section className="space-y-3"><h2 className="text-2xl font-bold">한 컷 요약</h2><p className="text-sm text-slate-300">철학자 한 명을 10초 안에 기억하는 카드</p><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><OneCutSummaryCard id="confucius" /><OneCutSummaryCard id="laozi" /><OneCutSummaryCard id="kant" /><OneCutSummaryCard id="bentham" /><OneCutSummaryCard id="yi_hwang" /><OneCutSummaryCard id="yi_i" /><OneCutSummaryCard id="hobbes" /><OneCutSummaryCard id="rawls" /></div></section>
           <ThoughtMap />
           <ExamTrapTraining />
         </div>
