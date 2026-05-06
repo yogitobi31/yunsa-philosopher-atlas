@@ -5,6 +5,20 @@ import { trapQuestions } from "@/data/trapQuestions";
 const WRONG_KEY = "ethics-atlas-wrong-answers-v2";
 type Mode = "RANDOM10" | "CATEGORY" | "WRONG" | "MOCK";
 
+const MODE_LABEL: Record<Mode, string> = {
+  RANDOM10: "랜덤 10문항",
+  CATEGORY: "유형별",
+  WRONG: "오답만",
+  MOCK: "실전 모의",
+};
+
+const normalizeChoice = (value: string) => {
+  const v = value.toLowerCase();
+  if (v === "true") return "O";
+  if (v === "false") return "X";
+  return value;
+};
+
 export function ExamTrapTraining() {
   const [mode, setMode] = useState<Mode>("RANDOM10");
   const [category, setCategory] = useState("전체");
@@ -13,7 +27,7 @@ export function ExamTrapTraining() {
   const categories = ["전체", ...Array.from(new Set(trapQuestions.map((q) => q.category)))];
 
   const pool = useMemo(() => {
-    const wrong = typeof window === "undefined" ? [] : JSON.parse(localStorage.getItem(WRONG_KEY) ?? "[]") as string[];
+    const wrong = typeof window === "undefined" ? [] : (JSON.parse(localStorage.getItem(WRONG_KEY) ?? "[]") as string[]);
     const base = category === "전체" ? trapQuestions : trapQuestions.filter((q) => q.category === category);
     if (mode === "WRONG") return base.filter((q) => wrong.includes(q.id));
     if (mode === "MOCK") return base.slice(0, 20);
@@ -21,27 +35,57 @@ export function ExamTrapTraining() {
     return base;
   }, [mode, category]);
 
+  const resetFilters = () => {
+    setCategory("전체");
+    setMode("RANDOM10");
+    setIdx(0);
+    setPicked(null);
+  };
+
   const q = pool[idx % Math.max(pool.length, 1)];
-  if (!q) return <section id="trap" className="section-shell"><h2 className="section-title">시험함정훈련소</h2><p className="mt-2 text-slate-300">선택한 조건의 문제가 없습니다.</p></section>;
-  const isCorrect = picked !== null && (typeof q.answer === "boolean" ? String(q.answer) === picked : q.answer === picked);
+  if (!q) {
+    return (
+      <section id="trap" className="section-shell pb-24 md:pb-10">
+        <p className="eyebrow">TRAP POINT CLINIC</p>
+        <h2 className="section-title mt-2">오답 함정 클리닉</h2>
+        <div className="mt-4 rounded-2xl border border-white/15 bg-slate-950/55 p-5">
+          <p className="text-slate-200">선택한 조건의 문제가 아직 없어요.</p>
+          <p className="mt-1 text-sm text-slate-300">필터를 초기화하거나 다른 범위를 선택해 보세요.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button onClick={resetFilters} className="rounded-xl border border-cyan-200/60 bg-cyan-400/15 px-4 py-2 text-sm">
+              전체 문제 보기
+            </button>
+            <button onClick={resetFilters} className="rounded-xl border border-white/20 px-4 py-2 text-sm">
+              필터 초기화
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const answerLabel = typeof q.answer === "boolean" ? (q.answer ? "O" : "X") : normalizeChoice(String(q.answer));
+  const isCorrect = picked !== null && answerLabel === picked;
   const submit = (value: string) => {
     if (picked) return;
     setPicked(value);
-    const correct = typeof q.answer === "boolean" ? String(q.answer) === value : q.answer === value;
+    const correct = answerLabel === value;
     if (!correct) {
       const prev = JSON.parse(localStorage.getItem(WRONG_KEY) ?? "[]") as string[];
       localStorage.setItem(WRONG_KEY, JSON.stringify(Array.from(new Set([...prev, q.id]))));
     }
   };
-  const choices = q.choices ?? ["true", "false"];
 
-  return <section id="trap" className="section-shell"><p className="eyebrow">Exam Trap Lab</p><h2 className="section-title mt-2">시험함정훈련소</h2><p className="mt-2 text-sm text-slate-300">총 {trapQuestions.length}문항 · 현재 {pool.length}문항</p>
-    <div className="mt-4 flex flex-wrap gap-2">{(["RANDOM10","CATEGORY","WRONG","MOCK"] as const).map((m)=><button key={m} onClick={()=>{setMode(m);setIdx(0);setPicked(null);}} className={`rounded-xl border px-3 py-2 text-sm ${mode===m?"border-cyan-200 bg-cyan-400/15":"border-white/20"}`}>{m}</button>)}
-    <select value={category} onChange={(e)=>{setCategory(e.target.value);setIdx(0);setPicked(null);}} className="rounded-xl border border-white/20 bg-slate-950/70 px-3 py-2 text-sm">{categories.map((c)=><option key={c}>{c}</option>)}</select></div>
+  const rawChoices = q.choices ?? ["true", "false"];
+  const choices = rawChoices.map((c) => normalizeChoice(String(c)));
+
+  return <section id="trap" className="section-shell pb-24 md:pb-10"><p className="eyebrow">TRAP POINT CLINIC</p><h2 className="section-title mt-2">오답 함정 클리닉</h2><p className="mt-2 text-sm text-slate-300">총 {trapQuestions.length}문항 · 현재 {pool.length}문항</p>
+    <div className="mt-4 flex flex-wrap gap-2">{(["RANDOM10", "CATEGORY", "WRONG", "MOCK"] as const).map((m) => <button key={m} onClick={() => { setMode(m); setIdx(0); setPicked(null); }} className={`min-h-10 rounded-xl border px-3 py-2 text-xs sm:text-sm ${mode === m ? "border-cyan-200 bg-cyan-400/15" : "border-white/20"}`}>{MODE_LABEL[m]}</button>)}
+      <select value={category} onChange={(e) => { setCategory(e.target.value); setIdx(0); setPicked(null); }} className="min-h-10 rounded-xl border border-white/20 bg-slate-950/70 px-3 py-2 text-xs sm:text-sm">{categories.map((c) => <option key={c}>{c}</option>)}</select></div>
     <article className="mt-4 rounded-3xl border border-white/15 bg-slate-950/55 p-5"><p className="text-sm text-slate-300">[{q.category}] {q.philosopher ?? "통합"} · {q.type}</p><p className="mt-3 text-lg">{q.question}</p>
-      <div className="mt-4 grid gap-2 md:grid-cols-2">{choices.map((c)=><button key={c} onClick={()=>submit(c)} className="rounded-xl border border-white/20 bg-white/[0.03] px-3 py-3 text-left hover:border-white/40">{c}</button>)}</div>
-      {picked && <div className={`mt-4 rounded-2xl border p-4 ${isCorrect?"border-emerald-300/40 bg-emerald-500/10":"border-rose-300/40 bg-rose-500/10"}`}><p><strong>정답:</strong> {String(q.answer)}</p><p><strong>해설:</strong> {q.explanation}</p><p><strong>함정 포인트:</strong> {q.trapPoint}</p></div>}
-      <button onClick={()=>{setIdx((v)=>v+1);setPicked(null);}} className="mt-4 rounded-xl border border-white/20 px-4 py-2">다음 문제</button>
+      <div className="mt-4 grid gap-2 md:grid-cols-2">{choices.map((c) => <button key={c} onClick={() => submit(c)} className="rounded-xl border border-white/20 bg-white/[0.03] px-3 py-3 text-left hover:border-white/40"><span className="text-xl font-semibold">{c}</span>{(c === "O" || c === "X") && <span className="ml-2 text-sm text-slate-300">{c === "O" ? "맞다" : "아니다"}</span>}</button>)}</div>
+      {picked && <div className={`mt-4 rounded-2xl border p-4 ${isCorrect ? "border-emerald-300/40 bg-emerald-500/10" : "border-rose-300/40 bg-rose-500/10"}`}><p className="font-semibold">{isCorrect ? "정답이에요." : "함정에 걸렸어요."}</p><p className="mt-1 text-sm text-slate-100">{isCorrect ? "핵심을 잘 잡았어요." : "이 선지는 이렇게 구분해야 해요."}</p><p className="mt-2"><strong>정답:</strong> {answerLabel}</p><p className="mt-1"><strong>해설:</strong> {q.explanation}</p><p className="mt-1"><strong>함정 포인트:</strong> {q.trapPoint}</p></div>}
+      <button onClick={() => { setIdx((v) => v + 1); setPicked(null); }} className="mt-4 rounded-xl border border-white/20 px-4 py-2">다음 문제</button>
     </article>
   </section>;
 }
