@@ -58,18 +58,40 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
           ⬇ 이미지로 저장
         </button>
       </div>
-      <p className="text-xs text-slate-300">현재 보이는 철학자 구조학습카드가 이미지로 저장됩니다.</p>
+      <p className="text-xs text-slate-300">모바일 프리미엄 암기카드 레이아웃 그대로 이미지로 저장됩니다.</p>
 
-      <div ref={cardRef} className="mt-4 mx-auto flex aspect-[4/5] w-full max-w-[720px] flex-col rounded-[22px] border border-slate-500/40 bg-gradient-to-b from-[#0e1629] to-[#151922] p-6">
-        <h3 className="text-2xl font-semibold tracking-tight">{topic.title}</h3>
-        <p className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-base leading-relaxed text-slate-100">Q. {topic.question}</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-2"><Info title="논점 핵심" value={topic.keyContrast} /><Info title="시험 포인트" value={topic.examPoint} /><Info title="시험 함정" value={topic.commonTrap} /></div>
-        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-          <p className="text-xs tracking-[0.18em] text-slate-400">대표 주장 · 비교 철학자</p>
-          <p className="mt-2 text-sm text-slate-100">대표 주장: {topic.shortInsight}</p>
-          <p className="mt-1 text-sm text-slate-200">비교 철학자: {topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / ")}</p>
+      <div className="mt-4 overflow-x-hidden px-1">
+        <div
+          ref={cardRef}
+          className="mx-auto flex aspect-[4/5] w-full max-w-[420px] flex-col rounded-[26px] border border-slate-400/45 bg-gradient-to-b from-[#0f172c] via-[#11192b] to-[#151b28] p-5 shadow-[0_24px_80px_rgba(4,10,25,0.5)] md:max-w-[720px] md:p-7"
+        >
+          <h3 className="text-xl font-semibold tracking-tight text-white md:text-2xl">{topic.title}</h3>
+
+          <div className="mt-4 space-y-3 md:hidden">
+            <Section title="메인 질문" value={topic.title} emphasis />
+            <Section title="핵심 질문" value={topic.question} />
+            <Section title="논점 핵심" value={topic.keyContrast} />
+            <Section title="시험 포인트" value={topic.examPoint} />
+            <Section title="시험 함정" value={topic.commonTrap} />
+            <Section title="대표 주장" value={topic.shortInsight} />
+            <Section
+              title="비교 철학자"
+              value={topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / ")}
+            />
+          </div>
+
+          <div className="mt-4 hidden md:block">
+            <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-base leading-relaxed text-slate-100">Q. {topic.question}</p>
+            <div className="mt-4 grid gap-3 md:grid-cols-2"><Info title="논점 핵심" value={topic.keyContrast} /><Info title="시험 포인트" value={topic.examPoint} /><Info title="시험 함정" value={topic.commonTrap} /></div>
+            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="text-xs tracking-[0.18em] text-slate-400">대표 주장 · 비교 철학자</p>
+              <p className="mt-2 text-sm text-slate-100">대표 주장: {topic.shortInsight}</p>
+              <p className="mt-1 text-sm text-slate-200">비교 철학자: {topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / ")}</p>
+            </div>
+          </div>
+
+          <div className="mt-auto border-t border-white/10 pt-3 text-center text-[11px] tracking-[0.14em] text-slate-400">윤리와 사상 구조학습 카드</div>
         </div>
-        <div className="mt-auto border-t border-white/10 pt-3 text-center text-xs tracking-[0.14em] text-slate-400">윤리와 사상 구조학습 카드</div>
       </div>
 
       {!compact && <div className="mt-6"><p className="text-sm font-medium text-slate-100">관련 철학자</p><div className="mt-3 flex flex-wrap gap-2">{topic.relatedPhilosophers.map((id) => <Link key={id} href={`/philosophers/${id}`} className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-slate-100 hover:border-white/35">{nameById[id] ?? id}</Link>)}</div></div>}
@@ -80,6 +102,17 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
 
 function Info({ title, value }: { title: string; value: string }) {
   return <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"><p className="text-xs tracking-[0.12em] text-slate-400">{title}</p><p className="mt-2 text-sm leading-relaxed text-slate-100">{value}</p></div>;
+}
+
+function Section({ title, value, emphasis = false }: { title: string; value: string; emphasis?: boolean }) {
+  return (
+    <section className="border-b border-white/10 pb-3 last:border-b-0">
+      <p className="text-[11px] font-medium tracking-[0.16em] text-cyan-100/85">{title}</p>
+      <p className={`mt-2 leading-[1.72] ${emphasis ? "text-[17px] font-semibold text-white" : "text-[15px] text-slate-100"}`}>
+        {value}
+      </p>
+    </section>
+  );
 }
 
 function slug(text: string) { return text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9가-힣-]/g, ""); }
