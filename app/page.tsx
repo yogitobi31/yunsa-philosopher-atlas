@@ -42,6 +42,15 @@ export default function Home() {
           <ThoughtMap />
         </div>
       </div>
+
+      <footer className="archive-footer">
+        <div className="archive-footer__inner">
+          <p className="archive-footer__title">PHILOSOPHER RELATION ATLAS</p>
+          <p className="archive-footer__subtitle">An interactive ethics archive by Juwon Jeon</p>
+          <p className="archive-footer__copy">© 2026 Juwon Jeon. All rights reserved.</p>
+          <p className="archive-footer__presented">Presented by Pilup Academy</p>
+        </div>
+      </footer>
     </main>
   );
 }

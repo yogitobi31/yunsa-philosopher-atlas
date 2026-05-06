@@ -39,3 +39,69 @@ body {
 @media (max-width: 768px) {
   .section-title { @apply text-2xl; }
 }
+
+.archive-footer {
+  margin-top: clamp(6rem, 10vw, 9rem);
+  padding: clamp(4.5rem, 8vw, 6.5rem) 1.5rem clamp(3.5rem, 6vw, 5rem);
+  text-align: center;
+  color: rgba(245, 242, 235, 0.62);
+  border-top: 1px solid rgba(226, 232, 240, 0.12);
+  background:
+    linear-gradient(180deg, rgba(148, 163, 184, 0.06) 0%, rgba(11, 16, 32, 0) 26%),
+    linear-gradient(180deg, rgba(7, 11, 22, 0.56) 0%, rgba(7, 11, 22, 0.2) 100%);
+}
+
+.archive-footer__inner {
+  margin: 0 auto;
+  max-width: 52rem;
+}
+
+.archive-footer__title {
+  font-family: Georgia, "Times New Roman", "Playfair Display", serif;
+  font-size: clamp(1rem, 2vw, 1.62rem);
+  letter-spacing: clamp(0.22em, 0.95vw, 0.42em);
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: rgba(241, 235, 224, 0.78);
+}
+
+.archive-footer__subtitle {
+  margin-top: 1rem;
+  font-family: Georgia, "Times New Roman", "Playfair Display", serif;
+  font-size: clamp(0.94rem, 1.5vw, 1.24rem);
+  font-style: italic;
+  line-height: 1.65;
+  color: rgba(236, 231, 222, 0.58);
+}
+
+.archive-footer__copy,
+.archive-footer__presented {
+  font-family: Inter, "Pretendard", "Apple SD Gothic Neo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+}
+
+.archive-footer__copy {
+  margin-top: 1.2rem;
+  font-size: clamp(0.76rem, 1.05vw, 0.96rem);
+  color: rgba(241, 245, 249, 0.46);
+}
+
+.archive-footer__presented {
+  margin-top: 0.45rem;
+  font-size: clamp(0.74rem, 0.96vw, 0.9rem);
+  color: rgba(241, 245, 249, 0.34);
+}
+
+@media (max-width: 640px) {
+  .archive-footer {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+  }
+
+  .archive-footer__title {
+    letter-spacing: 0.18em;
+    line-height: 1.7;
+  }
+}
