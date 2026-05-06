@@ -2,57 +2,73 @@
 import { useEffect, useMemo, useState } from "react";
 import { philosophers, regionFilters, Philosopher } from "@/data/philosophers";
 import { PhilosopherCard } from "./PhilosopherCard";
+import { StructureStudyCard } from "./StructureStudyCard";
 
 const SAVED_KEY = "philosopher_saved_cards";
 type ViewMode = "summary" | "detail" | "saved";
 
 function exportCardAsImage(philosopher: Philosopher) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1080;
-  canvas.height = 1350;
+  canvas.width = 1200;
+  canvas.height = 1500;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  ctx.fillStyle = "#050d1f";
+  ctx.fillStyle = "#090f1d";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const g = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  g.addColorStop(0, "rgba(34,211,238,0.14)");
-  g.addColorStop(1, "rgba(34,211,238,0)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.strokeStyle = "rgba(148, 163, 184, 0.4)";
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, "rgba(34, 211, 238, 0.12)");
+  gradient.addColorStop(1, "rgba(15, 23, 42, 0.08)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(80, 80, 1040, 1340);
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
   ctx.lineWidth = 2;
-  ctx.strokeRect(72, 72, 936, 1206);
+  ctx.strokeRect(80, 80, 1040, 1340);
 
-  const write = (text: string, x: number, y: number, size: number, color: string, weight = "400") => {
-    ctx.font = `${weight} ${size}px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`;
+  const drawText = (text: string, x: number, y: number, size: number, color = "#dce8ff", weight = "400") => {
+    ctx.font = `${weight} ${size}px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif`;
     ctx.fillStyle = color;
-    ctx.fillText(text, x, y);
+    const words = text.split(" ");
+    let line = "";
+    let yy = y;
+    for (const w of words) {
+      const test = `${line}${w} `;
+      if (ctx.measureText(test).width > 920) {
+        ctx.fillText(line.trim(), x, yy);
+        line = `${w} `;
+        yy += size * 1.45;
+      } else line = test;
+    }
+    if (line) ctx.fillText(line.trim(), x, yy);
+    return yy;
   };
 
-  write("PHILOSOPHER ATLAS", 120, 152, 30, "#8ca7c7", "500");
-  write(`${philosopher.category} · ${philosopher.tradition}`, 120, 214, 34, "#67e8f9", "500");
-  write(philosopher.name, 120, 310, 86, "#e5f8ff", "700");
-  write(philosopher.oneLineSummary.slice(0, 44), 120, 380, 34, "#dbe8ff");
+  drawText("윤리와 사상 구조 학습 카드", 130, 155, 24, "#95e8f4", "500");
+  drawText(`${philosopher.name}: ${philosopher.oneLineSummary}`, 130, 220, 52, "#f1f6ff", "700");
 
-  const lines = [
-    `핵심 흐름  ${philosopher.coreFlow.slice(0, 4).join(" → ")}`,
-    `시험 포인트  ${philosopher.examPoint.slice(0, 52)}`,
-    `함정 포인트  ${philosopher.trapPoint.slice(0, 52)}`,
-  ];
+  const rows = [
+    ["핵심 질문", philosopher.oneLineSummary],
+    ["핵심 개념", philosopher.keyIdeas.join(" · ")],
+    ["시험 포인트", philosopher.examPoint],
+    ["자주 나오는 함정", philosopher.trapPoint],
+    ["비교 철학자 / 비교 개념", philosopher.compareWith.join(" · ")],
+    ["한 줄 암기 문장", philosopher.representativeClaim],
+  ] as const;
 
-  lines.forEach((line, index) => {
-    const y = 520 + index * 120;
-    ctx.strokeStyle = "rgba(103,232,249,0.28)";
-    ctx.strokeRect(120, y - 44, 840, 78);
-    write(line, 146, y, 30, "#d7e8ff");
+  let y = 360;
+  rows.forEach(([title, body]) => {
+    ctx.strokeStyle = "rgba(148,163,184,0.24)";
+    ctx.strokeRect(130, y - 34, 940, 142);
+    drawText(title, 160, y, 22, "#9de4f2", "500");
+    drawText(body, 160, y + 36, 30);
+    y += 190;
   });
 
-  write("PHILOSOPHER ATLAS · 윤리와 사상", 120, 1220, 28, "#8ea0ba", "500");
+  drawText(`${philosopher.name}는 ${philosopher.representativeClaim}`, 130, 1380, 28, "#d4e1ff", "500");
+  drawText("Pilup Ethics Atlas", 870, 1440, 20, "#7f90aa", "500");
 
   const link = document.createElement("a");
-  link.download = `philosopher-card-${philosopher.id}.png`;
+  link.download = `윤사_${philosopher.name}_구조학습카드.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
 }
@@ -63,6 +79,7 @@ export function AtlasSection() {
   const [viewMode, setViewMode] = useState<ViewMode>("summary");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [exportStatus, setExportStatus] = useState<Record<string, "idle" | "saving" | "success" | "error">>({});
 
   useEffect(() => {
     const raw = localStorage.getItem(SAVED_KEY);
@@ -107,7 +124,22 @@ export function AtlasSection() {
           <div key={p.id} className="space-y-2">
             <PhilosopherCard philosopher={p} compact={viewMode === "summary" || viewMode === "saved"} expanded={expandedId === p.id} saved={savedIds.includes(p.id)} onToggleSave={() => toggleSave(p.id)} onToggleExpand={() => setExpandedId((prev) => prev === p.id ? null : p.id)} />
             {viewMode === "saved" && (
-              <button onClick={() => exportCardAsImage(p)} className="w-full rounded-xl border border-cyan-200/25 bg-cyan-300/10 px-3 py-2 text-sm text-cyan-100 hover:bg-cyan-300/20">이미지로 저장</button>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-3">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium text-slate-100">철학자 구조 학습 카드</p>
+                  <button onClick={() => {
+                    setExportStatus((prev) => ({ ...prev, [p.id]: "saving" }));
+                    try {
+                      exportCardAsImage(p);
+                      setExportStatus((prev) => ({ ...prev, [p.id]: "success" }));
+                    } catch {
+                      setExportStatus((prev) => ({ ...prev, [p.id]: "error" }));
+                    }
+                  }} className="rounded-xl border border-cyan-200/25 bg-cyan-300/10 px-3 py-2 text-xs text-cyan-100 hover:bg-cyan-300/20">이 카드 PNG로 저장</button>
+                </div>
+                <StructureStudyCard philosopher={p} />
+                <p className="mt-2 min-h-5 text-xs text-slate-300">{exportStatus[p.id] === "saving" ? "이미지 저장 중…" : exportStatus[p.id] === "success" ? "암기카드가 저장되었어요." : exportStatus[p.id] === "error" ? "저장 실패: 다시 시도해 주세요." : ""}</p>
+              </div>
             )}
           </div>
         ))}
