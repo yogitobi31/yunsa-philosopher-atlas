@@ -82,9 +82,9 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
         <div className="step-card-pager">
           <section className="step-card">
             <p className="text-xs tracking-[0.16em] text-[color:var(--text-soft)]">{steps[currentStep].title}</p>
-            <p className="mt-4 text-[clamp(1rem,4.1vw,1.18rem)] text-[color:var(--text-main)]">{steps[currentStep].body}</p>
+            <p className="step-card-main mt-4">{steps[currentStep].body}</p>
           </section>
-          <div className="mt-4 flex items-center justify-between gap-3 text-sm">
+          <div className="step-card-controls mt-4 flex items-center justify-between gap-3 text-sm">
             <button type="button" onClick={() => setCurrentStep((s) => Math.max(0, s - 1))} disabled={currentStep === 0} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 disabled:opacity-50">이전</button>
             <p className="text-[color:var(--text-soft)]">{currentStep + 1} / {steps.length}</p>
             <button type="button" onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))} disabled={currentStep === steps.length - 1} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 disabled:opacity-50">다음</button>
@@ -95,6 +95,18 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
         </div>
       </div>
 
+
+      <div className="mt-6 rounded-[24px] border border-[color:var(--line)] bg-[linear-gradient(180deg,#FFFDF8_0%,#FAF4E8_100%)] p-4 md:p-5">
+        <p className="eyebrow">윤사 구조학습 카드</p>
+        <h3 className="mt-2 text-xl font-semibold text-[#1F2933]">{topic.title}</h3>
+        <div className="study-card-grid mt-4 grid gap-3 md:grid-cols-2">
+          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3"><p className="text-xs text-[#6B6258]">메인 질문</p><p className="mt-1 text-sm text-[#374151]">{topic.question}</p></section>
+          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3"><p className="text-xs text-[#6B6258]">핵심 질문</p><p className="mt-1 text-sm text-[#374151]">{topic.shortInsight}</p></section>
+          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">비교 포인트</p><p className="mt-1 text-sm text-[#374151]">{compareText}</p></section>
+          <section className="rounded-2xl border border-[rgba(138,90,43,.22)] bg-[rgba(138,90,43,.08)] p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">시험 함정</p><p className="mt-1 text-sm text-[#8A5A2B]">{topic.commonTrap}</p></section>
+          <section className="rounded-2xl border border-[rgba(83,107,79,.24)] bg-[rgba(83,107,79,.08)] p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">한 줄 암기</p><p className="mt-1 text-sm text-[#374151]">{topic.shortInsight}</p></section>
+        </div>
+      </div>
       {!compact && <div className="mt-6"><p className="text-sm font-medium text-[color:var(--text-main)]">관련 철학자</p><div className="mt-3 flex flex-wrap gap-2">{topic.relatedPhilosophers.map((id) => <Link key={id} href={`/philosophers/${id}`} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-1.5 text-sm text-[color:var(--text-main)] hover:border-white/35">{nameById[id] ?? id}</Link>)}</div></div>}
       {saveError && <p className="mt-3 text-xs text-[#a34343]">이미지 저장 실패: {saveError}</p>}
       {toast && <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 text-xs text-[color:var(--text-main)]">{toast}</div>}
