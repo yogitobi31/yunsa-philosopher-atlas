@@ -1,4 +1,5 @@
 import { Philosopher } from "@/data/philosophers";
+import { ConceptComicSection } from "@/components/ConceptComicSection";
 
 type PhilosopherCardProps = {
   philosopher: Philosopher;
@@ -47,6 +48,7 @@ export function PhilosopherCard({ philosopher, expanded, compact = false, saved,
 
       {expanded && (
         <div className={`mt-4 grid gap-3 text-sm text-[#374151] ${compact ? "border-t border-[color:var(--line)] pt-4" : ""}`}>
+          <ConceptComicSection philosopher={philosopher} />
           <p><span className="text-[#6B6258]">시험 포인트</span><br />{philosopher.examPoint}</p>
           <p><span className="text-[#6B6258]">함정 포인트</span><br />{philosopher.trapPoint}</p>
           <p><span className="text-[#6B6258]">비교</span><br />{philosopher.compareWith.join(" / ")}</p>
