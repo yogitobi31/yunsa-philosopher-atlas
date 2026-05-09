@@ -20,6 +20,25 @@ export type Philosopher = {
   comicSummary?: string;
   comicExamPoint?: string;
   comicTrapPoint?: string;
+  comic?: ConceptComic;
+};
+
+export type ComicPanel = {
+  id: string;
+  imagePath: string;
+  scene: string;
+  speech?: string;
+  caption: string;
+};
+
+export type ConceptComic = {
+  title: string;
+  type: "four-panel" | "six-panel";
+  concept: string;
+  panels: ComicPanel[];
+  coreLine: string;
+  examPoint: string;
+  trapPoint: string;
 };
 
 export const philosophers: Philosopher[] = [
@@ -64,5 +83,41 @@ export const philosophers: Philosopher[] = [
   { id:"jonas",name:"요나스",category:"현대 응용 윤리",tradition:"기술윤리",era:"현대",oneLineSummary:"기술문명 시대에 미래 세대까지 고려하는 책임윤리를 강조한다.",coreFlow:["기술위험","예견","책임","미래세대"],keyIdeas:["책임의 원리","예방 원칙","미래 윤리"],examPoint:"요나스는 기술 행위의 장기 결과를 고려한 책임을 요구한다.",trapPoint:"현재 세대 효용만 중시하면 오답이다.",compareWith:["레오폴드","하버마스"],keywords:["책임윤리","미래세대","기술"],representativeClaim:"인류의 지속 가능성을 해치지 않는 방향으로 기술을 통제해야 한다."},
   { id:"gilligan",name:"길리건",category:"현대 응용 윤리",tradition:"배려윤리",era:"현대",oneLineSummary:"관계와 배려의 맥락을 중시하는 도덕 발달 관점을 제시했다.",coreFlow:["관계","배려","책임","맥락판단"],keyIdeas:["배려윤리","관계성","맥락적 판단"],examPoint:"길리건은 추상적 원칙 중심 도덕성 평가의 한계를 비판한다.",trapPoint:"정의 윤리를 전면 부정한 것으로 보면 오답이다.",compareWith:["칸트","롤스"],keywords:["배려윤리","관계","맥락"],representativeClaim:"도덕 판단은 보편 원칙뿐 아니라 관계적 책임을 함께 고려해야 한다."}
 ];
+
+const comicById: Record<string, ConceptComic> = {
+  confucius: { title: "배려가 예가 되는 점심시간", type: "four-panel", concept: "인과 예", panels: [
+    { id: "confucius-01", imagePath: "/comics/confucius-01.png", scene: "급식 줄이 길어지자 새치기 유혹이 생긴다.", speech: "빨리 먹고 싶은데…", caption: "인(仁)은 타인의 입장을 먼저 느끼게 한다." },
+    { id: "confucius-02", imagePath: "/comics/confucius-02.png", scene: "학생이 다시 줄 뒤로 돌아간다.", speech: "먼저 온 친구들부터.", caption: "예(禮)는 마음을 행동 질서로 만든다." },
+    { id: "confucius-03", imagePath: "/comics/confucius-03.png", scene: "부딪힌 친구의 식판을 함께 정리한다.", speech: "내가 같이 치울게.", caption: "배려는 관계를 회복하는 실천이 된다." },
+    { id: "confucius-04", imagePath: "/comics/confucius-04.png", scene: "질서가 회복되고 모두가 편해진다.", speech: "오늘은 훨씬 빠르다.", caption: "공자는 인이 예로 구현될 때 공동체가 안정된다고 본다." }
+  ], coreLine: "공자는 인의 마음을 예의 실천으로 드러낼 때 인간다운 질서가 선다고 본다.", examPoint: "예는 형식주의가 아니라 인을 사회적으로 구현하는 규범 실천이다.", trapPoint: "인을 감정, 예를 규칙으로 분리하면 공자 핵심을 놓친다." },
+  mencius: { title: "마음이 먼저 움직이는 순간", type: "four-panel", concept: "성선설과 사단", panels: [
+    { id: "mencius-01", imagePath: "/comics/mencius-01.png", scene: "복도에서 친구가 넘어질 뻔한다.", speech: "앗, 조심해!", caption: "위험을 본 순간 계산보다 먼저 마음이 움직인다." },
+    { id: "mencius-02", imagePath: "/comics/mencius-02.png", scene: "학생이 반사적으로 친구를 붙잡아 준다.", speech: "괜찮아?", caption: "맹자는 이를 선한 마음의 단서로 설명한다." },
+    { id: "mencius-03", imagePath: "/comics/mencius-03.png", scene: "씨앗 비유로 사단을 설명한다.", speech: "안에 선함의 싹이 있어.", caption: "사단은 도덕의 출발점이다." },
+    { id: "mencius-04", imagePath: "/comics/mencius-04.png", scene: "싹을 가꾸는 장면.", speech: "키워야 덕이 된다.", caption: "성선설은 완성된 성인이 아니라 확충 가능성을 말한다." }
+  ], coreLine: "맹자는 인간 안에 선한 마음의 단서가 있다고 보았다.", examPoint: "성선설은 태생적 완성 덕이 아니라 선한 가능성의 존재다.", trapPoint: "사단은 선한 마음의 싹이지 완성된 덕이 아니다." },
+  xunzi: { title: "규칙이 욕망을 길들이는 법", type: "four-panel", concept: "성악설과 예", panels: [
+    { id: "xunzi-01", imagePath: "/comics/xunzi-01.png", scene: "동아리 물건을 서로 먼저 쓰려 다툰다.", speech: "내가 먼저 잡았어!", caption: "욕망이 충돌하면 갈등이 커진다." },
+    { id: "xunzi-02", imagePath: "/comics/xunzi-02.png", scene: "분위기가 험악해진다.", caption: "자연 상태만으로는 질서가 유지되기 어렵다." },
+    { id: "xunzi-03", imagePath: "/comics/xunzi-03.png", scene: "사용 규칙과 순번표를 만든다.", speech: "규칙대로 하자.", caption: "순자는 예와 제도로 욕망을 조절해야 한다고 본다." },
+    { id: "xunzi-04", imagePath: "/comics/xunzi-04.png", scene: "질서가 회복된다.", caption: "후천적 교육과 훈련이 도덕을 만든다." }
+  ], coreLine: "순자는 인간 본성을 교정하는 예와 교육이 필요하다고 본다.", examPoint: "성악설은 도덕 불가능론이 아니라 교화 필요성 주장이다.", trapPoint: "성악설을 ‘인간은 절대 선해질 수 없음’으로 오해하면 오답이다." },
+  laozi: { title: "덜 개입할수록 살아나는 팀", type: "four-panel", concept: "무위자연", panels: [{ id:"laozi-01", imagePath:"/comics/laozi-01.png", scene:"리더가 모든 과정을 통제한다.", caption:"과도한 인위는 흐름을 막는다." },{ id:"laozi-02", imagePath:"/comics/laozi-02.png", scene:"팀원들이 눈치만 보며 멈춘다.", speech:"뭘 해도 수정되네…", caption:"억지 개입은 자발성을 약화시킨다." },{ id:"laozi-03", imagePath:"/comics/laozi-03.png", scene:"핵심 방향만 제시하고 맡긴다.", speech:"역할만 정하자.", caption:"무위는 무책임이 아니라 과잉 개입의 절제다." },{ id:"laozi-04", imagePath:"/comics/laozi-04.png", scene:"자연스럽게 결과가 완성된다.", caption:"노자는 자연의 흐름을 살리는 통치를 강조한다." }], coreLine:"무위자연은 아무것도 안 함이 아니라 과도한 인위를 줄이는 원리다.", examPoint:"무위는 최소 개입을 통한 조화의 정치 원리로 자주 출제된다.", trapPoint:"무위를 방임으로 번역하면 노자의 핵심이 왜곡된다." },
+  zhuangzi: { title:"비교를 내려놓는 연습", type:"four-panel", concept:"소요유와 제물", panels:[{id:"zhuangzi-01",imagePath:"/comics/zhuangzi-01.png",scene:"성적 게시판 앞에서 서로를 재단한다.",caption:"고정된 기준은 스스로를 가둔다."},{id:"zhuangzi-02",imagePath:"/comics/zhuangzi-02.png",scene:"친구가 실패를 숨긴다.",speech:"난 원래 안 되는 사람인가…",caption:"분별 집착은 마음을 좁힌다."},{id:"zhuangzi-03",imagePath:"/comics/zhuangzi-03.png",scene:"관점을 바꿔 서로의 상황을 듣는다.",caption:"제물은 절대적 분별의 해체를 뜻한다."},{id:"zhuangzi-04",imagePath:"/comics/zhuangzi-04.png",scene:"각자 방식으로 편안히 몰입한다.",speech:"이제 숨이 쉬어진다.",caption:"소요유는 집착을 벗어난 자유로운 삶의 상태다."}], coreLine:"장자는 고정된 분별을 내려놓을 때 자유로운 삶이 가능하다고 본다.", examPoint:"제물은 가치의 완전 부정이 아니라 절대화 비판이다.", trapPoint:"장자를 허무주의로만 해석하면 시험에서 오답이 된다." },
+  mozi: { title:"모두에게 닿는 공지", type:"four-panel", concept:"겸애", panels:[{id:"mozi-01",imagePath:"/comics/mozi-01.png",scene:"친한 무리끼리만 정보를 돌린다.",caption:"편애는 구조적 손해를 만든다."},{id:"mozi-02",imagePath:"/comics/mozi-02.png",scene:"소외된 학생이 준비 기회를 놓친다.",speech:"왜 나만 몰랐지?",caption:"친소 기준은 공적 장면에서 부정의를 만든다."},{id:"mozi-03",imagePath:"/comics/mozi-03.png",scene:"공지 채널을 모두에게 동일하게 연다.",caption:"겸애는 차별 없는 배려를 요구한다."},{id:"mozi-04",imagePath:"/comics/mozi-04.png",scene:"혼란이 줄고 협력이 늘어난다.",caption:"묵자는 공평한 사랑이 사회 효용을 높인다고 본다."}], coreLine:"묵자의 겸애는 친소를 넘어 모두를 공평하게 고려하는 원리다.", examPoint:"겸애는 가족 해체가 아니라 공적 차별 완화의 윤리다.", trapPoint:"겸애를 무차별적 감정 동일화로 해석하면 부정확하다." },
+  socrates: { title:"질문이 나를 바꾸는 시간", type:"four-panel", concept:"너 자신을 알라", panels:[{id:"socrates-01",imagePath:"/comics/socrates-01.png",scene:"토론에서 확신만 앞세워 말한다.",speech:"내 말이 정답이야.",caption:"무지의 자각이 없으면 대화가 멈춘다."},{id:"socrates-02",imagePath:"/comics/socrates-02.png",scene:"친구가 근거를 묻자 답이 흔들린다.",caption:"질문은 생각의 빈틈을 드러낸다."},{id:"socrates-03",imagePath:"/comics/socrates-03.png",scene:"정의 개념을 다시 정의해 본다.",speech:"내가 아는 게 맞나?",caption:"성찰은 덕의 앎으로 가는 출발점이다."},{id:"socrates-04",imagePath:"/comics/socrates-04.png",scene:"더 나은 합의에 도달한다.",caption:"소크라테스는 검토된 삶을 강조했다."}], coreLine:"소크라테스는 무지의 자각과 문답을 통해 덕의 앎을 추구했다.", examPoint:"‘너 자신을 알라’는 자기비하가 아니라 반성적 성찰의 요청이다.", trapPoint:"소피스트식 상대주의와 동일시하면 오답이다." },
+  plato: { title:"동굴 밖의 맥락", type:"four-panel", concept:"동굴의 비유", panels:[{id:"plato-01",imagePath:"/comics/plato-01.png",scene:"짧은 영상만 보고 사실이라 단정한다.",caption:"그림자는 전체를 대신하지 못한다."},{id:"plato-02",imagePath:"/comics/plato-02.png",scene:"오해가 갈등으로 번진다.",caption:"감각 정보만으로는 판단이 흔들린다."},{id:"plato-03",imagePath:"/comics/plato-03.png",scene:"원자료와 맥락을 확인한다.",speech:"전체를 보자.",caption:"인식 전환은 교육의 과정이다."},{id:"plato-04",imagePath:"/comics/plato-04.png",scene:"친구들에게 다시 설명한다.",caption:"플라톤은 진리를 본 자의 사회적 책무도 강조했다."}], coreLine:"플라톤은 감각의 그림자를 넘어 이성으로 진리를 인식해야 한다고 본다.", examPoint:"동굴의 비유는 인식론 + 정치철학(철학자의 책무)을 함께 묻는다.", trapPoint:"단순 현실도피 우화로 축소하면 오답이다." },
+  aristotle: { title:"중간이 아니라 적절함", type:"four-panel", concept:"중용", panels:[{id:"aristotle-01",imagePath:"/comics/aristotle-01.png",scene:"발표에서 너무 과감하거나 지나치게 위축된다.",caption:"과다와 과소 모두 덕에서 벗어난다."},{id:"aristotle-02",imagePath:"/comics/aristotle-02.png",scene:"상황에 맞는 용기 수준을 찾는다.",caption:"중용은 산술 평균이 아니다."},{id:"aristotle-03",imagePath:"/comics/aristotle-03.png",scene:"반복 연습으로 태도가 안정된다.",speech:"이번엔 균형 있게.",caption:"덕은 습관화된 성품이다."},{id:"aristotle-04",imagePath:"/comics/aristotle-04.png",scene:"팀 전체가 신뢰를 얻는다.",caption:"행복은 이성에 따른 덕의 활동에서 완성된다."}], coreLine:"아리스토텔레스의 중용은 상황에 맞는 적절함을 습관으로 기르는 윤리다.", examPoint:"중용은 ‘중간값’이 아니라 실천적 지혜가 찾는 적절성이다.", trapPoint:"중용을 우유부단한 타협으로 보면 오답이다." },
+  kant:{ title:"예외를 허용할 수 있는가", type:"four-panel", concept:"정언명령", panels:[{id:"kant-01",imagePath:"/comics/kant-01.png",scene:"친구를 위해 거짓말하고 싶은 상황.",caption:"선의 의도라도 원칙 검토가 필요하다."},{id:"kant-02",imagePath:"/comics/kant-02.png",scene:"‘이번 한 번만’이라고 합리화한다.",speech:"결과만 좋으면 되지 않을까?",caption:"칸트는 결과보다 동기의 보편성을 묻는다."},{id:"kant-03",imagePath:"/comics/kant-03.png",scene:"모두가 같은 원칙을 써도 되는지 질문한다.",caption:"정언명령: 보편화 가능성 테스트."},{id:"kant-04",imagePath:"/comics/kant-04.png",scene:"사람을 수단이 아닌 목적으로 대한다.",caption:"존엄은 계산 대상이 아니라 의무의 기준이다."}], coreLine:"칸트는 도덕성을 결과가 아니라 보편화 가능한 의무의 실천에서 찾는다.", examPoint:"정언명령은 예외적 이익 계산보다 원칙의 보편 타당성을 요구한다.", trapPoint:"칸트를 감정 없는 기계윤리로 단순화하면 오답이다." },
+  bentham:{ title:"한정된 예산, 어떤 행복을 택할까", type:"four-panel", concept:"공리주의", panels:[{id:"util-01",imagePath:"/comics/util-01.png",scene:"축제 예산을 어디에 쓸지 논쟁한다.",caption:"선택은 결과 비교를 요구한다."},{id:"util-02",imagePath:"/comics/util-02.png",scene:"벤담: 즉시 즐거움의 총량을 계산한다.",speech:"더 많은 만족이 우선!",caption:"양적 공리주의 관점."},{id:"util-03",imagePath:"/comics/util-03.png",scene:"밀: 장기 성장의 질도 따져본다.",speech:"질 높은 행복이 중요해.",caption:"질적 공리주의 관점."},{id:"util-04",imagePath:"/comics/util-04.png",scene:"최대 행복을 만드는 절충안을 만든다.",caption:"공리주의는 결과의 공공 효용을 판단 기준으로 삼는다."}], coreLine:"벤담·밀의 공리주의는 행위 결과가 만드는 행복의 크기와 질을 평가한다.", examPoint:"벤담=양적, 밀=질적 공리주의 구분은 빈출 포인트다.", trapPoint:"공리주의를 단순 다수결로 이해하면 오답이다." },
+  rawls:{ title:"내 위치를 모른 채 규칙 만들기", type:"four-panel", concept:"무지의 베일", panels:[{id:"rawls-01",imagePath:"/comics/rawls-01.png",scene:"학급 규칙을 새로 정해야 한다.",caption:"누구에게 유리한지 쉽게 갈린다."},{id:"rawls-02",imagePath:"/comics/rawls-02.png",scene:"자신의 위치를 모른다고 가정한다.",caption:"무지의 베일은 편향을 잠시 지운다."},{id:"rawls-03",imagePath:"/comics/rawls-03.png",scene:"최약자도 버틸 규칙을 우선 검토한다.",speech:"나중에 내가 약자일 수도 있어.",caption:"차등의 원칙이 작동한다."},{id:"rawls-04",imagePath:"/comics/rawls-04.png",scene:"공정한 절차로 합의가 이뤄진다.",caption:"롤스는 정의를 공정한 절차에서 찾는다."}], coreLine:"롤스는 무지의 베일 아래 합의 가능한 원칙이 공정하다고 본다.", examPoint:"차등의 원칙은 불평등을 금지하지 않고 최소수혜자 이익 조건을 붙인다.", trapPoint:"롤스를 결과의 절대 평등론으로 보면 오답이다." }
+};
+
+philosophers.forEach((philosopher) => {
+  const mapped = comicById[philosopher.id];
+  if (mapped) philosopher.comic = mapped;
+});
+
 
 export const regionFilters = ["전체","동양 윤리","한국 윤리","서양 윤리","사회사상","현대 응용 윤리"] as const;
