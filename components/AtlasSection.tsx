@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { philosophers, regionFilters, Philosopher } from "@/data/philosophers";
 import { PhilosopherCard } from "./PhilosopherCard";
 import { StructureStudyCard } from "./StructureStudyCard";
-import { MemorizationExportCard } from "./MemorizationExportCard";
 
 const SAVED_KEY = "philosopher_saved_cards";
 type ViewMode = "summary" | "detail" | "saved";
@@ -16,8 +15,6 @@ export function AtlasSection() {
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [exportStatus, setExportStatus] = useState<Record<string, "idle" | "saving" | "success" | "error">>({});
   const [exportError, setExportError] = useState<Record<string, string>>({});
-  const [activeExportPhilosopher, setActiveExportPhilosopher] = useState<Philosopher>(philosophers[0]);
-  const exportCardRef = useRef<HTMLDivElement | null>(null);
 
   const mencius = philosophers.find((p) => p.id === "mencius");
   const xunzi = philosophers.find((p) => p.id === "xunzi");
@@ -39,21 +36,10 @@ export function AtlasSection() {
   };
 
   const saveMemorizationCard = async (philosopher: Philosopher) => {
-    setActiveExportPhilosopher(philosopher);
     setExportStatus((prev) => ({ ...prev, [philosopher.id]: "saving" }));
     setExportError((prev) => ({ ...prev, [philosopher.id]: "" }));
 
     try {
-      const node = exportCardRef.current;
-      if (!node) throw new Error("Export card ref is null");
-
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
-      await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
-
-      const rect = node.getBoundingClientRect();
-      if (!rect.width || !rect.height) throw new Error(`Export card has invalid size: ${rect.width}x${rect.height}`);
-
       const canvas = document.createElement("canvas");
       canvas.width = 1080;
       canvas.height = 1350;
@@ -137,7 +123,7 @@ export function AtlasSection() {
     <p className="mt-3 text-sm text-slate-300">현재 표시 카드 수: {visibleList.length}명의 철학자</p>
 
     {viewMode === "saved" && visibleList.length === 0 ? <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-slate-300">아직 저장한 카드가 없습니다.</div> : (
-      <div className={`mt-6 grid gap-4 ${viewMode === "saved" ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2"}`}>
+      <div className={`philosopher-grid mt-6 grid gap-4 ${viewMode === "saved" ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2"}`}>
         {visibleList.map((p) => (
           <div key={p.id} className="space-y-2">
             <PhilosopherCard philosopher={p} compact={viewMode === "summary" || viewMode === "saved"} expanded={expandedId === p.id} saved={savedIds.includes(p.id)} onToggleSave={() => toggleSave(p.id)} onToggleExpand={() => setExpandedId((prev) => prev === p.id ? null : p.id)} />
@@ -147,10 +133,5 @@ export function AtlasSection() {
       </div>
     )}
 
-    <div className="export-card-stage" aria-hidden="true">
-      <div ref={exportCardRef}>
-        <MemorizationExportCard philosopher={activeExportPhilosopher} menciusView={mencius?.oneLineSummary ?? ""} xunziView={xunzi?.oneLineSummary ?? ""} />
-      </div>
-    </div>
   </section>;
 }

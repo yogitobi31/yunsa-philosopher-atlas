@@ -5,25 +5,34 @@ type StructureStudyCardProps = {
   className?: string;
 };
 
-const itemClass = "min-w-0 rounded-2xl border border-white/10 bg-white/[0.03] p-3 md:p-4";
+const panelClass = "rounded-2xl border border-[rgba(80,65,45,0.14)] bg-[rgba(255,253,248,0.88)] p-4";
 
 export function StructureStudyCard({ philosopher, className = "" }: StructureStudyCardProps) {
   return (
-    <article className={`study-card w-full max-w-[860px] box-border overflow-hidden rounded-[28px] border border-white/15 bg-slate-950/80 p-4 shadow-[0_20px_55px_rgba(2,6,18,.45)] [word-break:keep-all] [overflow-wrap:break-word] [white-space:normal] md:p-6 ${className}`}>
-      <p className="text-[11px] tracking-[0.16em] text-cyan-200/85">윤리와 사상 구조 학습 카드</p>
-      <h3 className="mt-2 text-xl font-semibold leading-tight text-slate-100 md:text-3xl">{philosopher.name}: {philosopher.oneLineSummary}</h3>
+    <article className={`study-card rounded-[28px] border border-[color:var(--line)] bg-[linear-gradient(180deg,#FFFDF8_0%,#FAF4E8_100%)] p-5 shadow-[0_20px_55px_rgba(80,65,45,.1)] md:p-6 ${className}`}>
+      <p className="eyebrow">윤사 구조학습 카드</p>
+      <h3 className="mt-2 text-2xl font-semibold leading-tight text-[#1F2933] md:text-3xl">{philosopher.name}</h3>
 
-      <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 text-[13px] leading-relaxed text-slate-200 md:grid-cols-2 md:gap-4 md:text-[14px]">
-        <section className={itemClass}><p className="text-xs text-cyan-100/85">핵심 질문</p><p className="mt-1">{philosopher.oneLineSummary}</p></section>
-        <section className={itemClass}><p className="text-xs text-cyan-100/85">핵심 개념</p><p className="mt-1">{philosopher.keyIdeas.join(" · ")}</p></section>
-        <section className={itemClass}><p className="text-xs text-cyan-100/85">시험 포인트</p><p className="mt-1">{philosopher.examPoint}</p></section>
-        <section className={itemClass}><p className="text-xs text-cyan-100/85">자주 나오는 함정</p><p className="mt-1">{philosopher.trapPoint}</p></section>
-        <section className={itemClass}><p className="text-xs text-cyan-100/85">비교 철학자 / 비교 개념</p><p className="mt-1">{philosopher.compareWith.join(" · ")}</p></section>
-        <section className={itemClass}><p className="text-xs text-cyan-100/85">한 줄 암기 문장</p><p className="mt-1">{philosopher.representativeClaim}</p></section>
+      <div className="mt-4 grid gap-3 text-sm leading-relaxed text-[#374151] md:grid-cols-2">
+        <section className={panelClass}><p className="text-xs text-[#6B6258]">메인 질문</p><p className="mt-1">{philosopher.oneLineSummary}</p></section>
+        <section className={panelClass}><p className="text-xs text-[#6B6258]">핵심 질문</p><p className="mt-1">{philosopher.examPoint}</p></section>
+        <section className={panelClass}><p className="text-xs text-[#6B6258]">비교 포인트</p><p className="mt-1">{philosopher.compareWith.join(" · ")}</p></section>
+        <section className={panelClass}><p className="text-xs text-[#6B6258]">핵심 개념</p><p className="mt-1">{philosopher.keyIdeas.join(" · ")}</p></section>
       </div>
 
-      <p className="mt-4 text-[12px] leading-relaxed text-slate-300 md:text-[13px]">{philosopher.name}는 {philosopher.representativeClaim}</p>
-      <p className="mt-3 text-right text-[10px] tracking-[0.14em] text-slate-500">Pilup Ethics Atlas</p>
+      <section className="mt-3 rounded-2xl border border-[rgba(138,90,43,.22)] bg-[rgba(138,90,43,.08)] p-4 text-sm text-[#8A5A2B]">
+        <p className="text-xs text-[#6B6258]">시험 함정</p>
+        <p className="mt-1">{philosopher.trapPoint}</p>
+      </section>
+
+      <section className="mt-3 rounded-2xl border border-[rgba(83,107,79,.24)] bg-[rgba(83,107,79,.08)] p-4 text-sm text-[#374151]">
+        <p className="text-xs text-[#6B6258]">한 줄 암기</p>
+        <p className="mt-1">{philosopher.representativeClaim}</p>
+      </section>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {philosopher.compareWith.map((tag) => <span key={tag} className="philosopher-tag rounded-full px-2.5 py-1 text-[11px]">{tag}</span>)}
+      </div>
     </article>
   );
 }
