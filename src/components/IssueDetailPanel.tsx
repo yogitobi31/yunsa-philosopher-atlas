@@ -1,22 +1,19 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { philosophers } from "@/data/philosophers";
 import { IssueTopic } from "@/src/types/issueTopic";
-import { toPngBlob } from "@/src/lib/htmlToImage";
-import { MemorizationExportCard } from "@/src/components/MemorizationExportCard";
 
 type Props = { topic: IssueTopic; compact?: boolean };
-
 type SaveState = "idle" | "saving" | "success" | "error";
 
 const nameById = Object.fromEntries(philosophers.map((p) => [p.id, p.name]));
 
 export function IssueDetailPanel({ topic, compact = false }: Props) {
-  const exportCardRef = useRef<HTMLDivElement | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [saveError, setSaveError] = useState("");
   const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [currentStep, setCurrentStep] = useState(0);
   const philosopherIds = useMemo(() => topic.relatedPhilosophers.join("-"), [topic]);
   const compareText = useMemo(
     () => topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / "),
@@ -24,6 +21,14 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
   );
 
   const fileName = `ethics-card_${slug(philosopherIds)}_${slug(topic.id)}.png`;
+
+  const steps = [
+    { title: "CARD 1 · 핵심 질문", body: topic.question },
+    { title: "CARD 2 · 맹자 vs 순자 핵심 비교", body: compareText },
+    { title: "CARD 3 · 시험 함정 포인트", body: topic.commonTrap },
+    { title: "CARD 4 · 한 줄 암기", body: topic.shortInsight },
+    { title: "CARD 5 · 저장 안내", body: "아래 저장 버튼으로 SNS 공유용 카드 생성" },
+  ];
 
   const showToast = (text: string) => {
     setToast(text);
@@ -34,19 +39,7 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
     setSaveState("saving");
     setSaveError("");
     try {
-      const node = exportCardRef.current;
-      if (!node) throw new Error("Export card ref is null");
-
-      const rect = node.getBoundingClientRect();
-      if (!rect.width || !rect.height) throw new Error(`Export card has invalid size: ${rect.width}x${rect.height}`);
-
-      if (document.fonts?.ready) await document.fonts.ready;
-      await waitForImages(node);
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
-
-      const blob = await toPngBlob(node, { pixelRatio: 2, width: 1080, height: 1350 });
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const blob = await createMemorizationPng(topic, compareText);
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 
       if (isIOS) {
@@ -58,27 +51,17 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
       }
 
       const url = URL.createObjectURL(blob);
-      if (isMobile) {
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        link.rel = "noopener";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      } else {
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setSaveState("success");
       showToast("암기카드 이미지가 저장되었습니다.");
     } catch (error) {
-      console.error("Image export failed:", error);
+      console.error("Canvas image export failed:", error);
       setSaveState("error");
       const message = error instanceof Error ? error.message : String(error);
       setSaveError(message);
@@ -86,35 +69,30 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
     }
   };
 
-  const steps = [
-    { title: "CARD 1 · 핵심 질문", body: topic.question },
-    { title: "CARD 2 · 맹자 vs 순자 핵심 비교", body: compareText },
-    { title: "CARD 3 · 시험 함정 포인트", body: topic.commonTrap },
-    { title: "CARD 4 · 한 줄 암기", body: topic.shortInsight },
-    { title: "CARD 5 · 저장용 프리미엄 카드", body: "아래 저장 버튼으로 SNS 공유용 카드 생성" },
-  ];
-
   return (
     <article className={`premium-card glass relative ${compact ? "p-5" : "p-6 md:p-7"}`}>
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="step-card-header mb-3">
         <p className="eyebrow">Step Card Flow</p>
-        <button disabled={saveState === "saving"} onClick={downloadImage} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 text-sm text-[color:var(--text-main)] hover:border-cyan-200/60 disabled:cursor-not-allowed disabled:opacity-55">
+        <button disabled={saveState === "saving"} onClick={downloadImage} className="save-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 text-sm text-[color:var(--text-main)] hover:border-cyan-200/60 disabled:cursor-not-allowed disabled:opacity-55">
           ⬇ {saveState === "saving" ? "저장 중..." : saveState === "success" ? "저장 완료" : saveState === "error" ? "저장 실패" : "이미지로 저장"}
         </button>
       </div>
 
-      <div className="step-card-flow mt-4"><div className="step-card-row mt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {steps.map((step, idx) => (
-          <section key={step.title} className="step-card rounded-3xl border border-white/15 bg-gradient-to-b from-[#fffdf8] to-[#faf4e8] p-6 shadow-[0_16px_40px_rgba(80,65,45,.12)]">
-            <p className="text-xs tracking-[0.16em] text-[color:var(--text-soft)]">{step.title}</p>
-            <p className="mt-4 text-[clamp(1rem,4.1vw,1.18rem)] leading-[1.75] text-[color:var(--text-main)] [word-break:keep-all] break-words">{step.body}</p>
-            <p className="mt-6 text-xs text-[color:var(--text-soft)]">{idx + 1} / 5</p>
+      <div className="step-card-flow mt-4">
+        <div className="step-card-pager">
+          <section className="step-card">
+            <p className="text-xs tracking-[0.16em] text-[color:var(--text-soft)]">{steps[currentStep].title}</p>
+            <p className="mt-4 text-[clamp(1rem,4.1vw,1.18rem)] text-[color:var(--text-main)]">{steps[currentStep].body}</p>
           </section>
-        ))}
-      </div></div>
-
-      <div className="export-card-stage" aria-hidden>
-        <MemorizationExportCard ref={exportCardRef} topic={topic} />
+          <div className="mt-4 flex items-center justify-between gap-3 text-sm">
+            <button type="button" onClick={() => setCurrentStep((s) => Math.max(0, s - 1))} disabled={currentStep === 0} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 disabled:opacity-50">이전</button>
+            <p className="text-[color:var(--text-soft)]">{currentStep + 1} / {steps.length}</p>
+            <button type="button" onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))} disabled={currentStep === steps.length - 1} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 disabled:opacity-50">다음</button>
+          </div>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            {steps.map((_, idx) => <button key={idx} onClick={() => setCurrentStep(idx)} className={`h-2.5 w-2.5 rounded-full ${idx === currentStep ? "bg-[color:var(--accent-gold)]" : "bg-[#d9cfbd]"}`} aria-label={`카드 ${idx + 1}`} />)}
+          </div>
+        </div>
       </div>
 
       {!compact && <div className="mt-6"><p className="text-sm font-medium text-[color:var(--text-main)]">관련 철학자</p><div className="mt-3 flex flex-wrap gap-2">{topic.relatedPhilosophers.map((id) => <Link key={id} href={`/philosophers/${id}`} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-1.5 text-sm text-[color:var(--text-main)] hover:border-white/35">{nameById[id] ?? id}</Link>)}</div></div>}
@@ -124,12 +102,116 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
   );
 }
 
-async function waitForImages(node: HTMLElement) {
-  const images = Array.from(node.querySelectorAll("img"));
-  await Promise.all(images.map((img) => (img.complete ? Promise.resolve() : new Promise<void>((resolve, reject) => {
-    img.addEventListener("load", () => resolve(), { once: true });
-    img.addEventListener("error", () => reject(new Error(`Image failed to load: ${img.src}`)), { once: true });
-  }))));
+async function createMemorizationPng(topic: IssueTopic, compareText: string) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1350;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas context is null");
+
+  const bg = ctx.createLinearGradient(0, 0, 1080, 1350);
+  bg.addColorStop(0, "#F8F1E4");
+  bg.addColorStop(0.5, "#FFFDF8");
+  bg.addColorStop(1, "#E9F0E4");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1080, 1350);
+
+  roundRect(ctx, 80, 90, 920, 1170, 48);
+  ctx.fillStyle = "#FFFDF8";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(80,65,45,0.12)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  let y = 170;
+  ctx.fillStyle = "#8A8175";
+  ctx.font = "600 30px 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif";
+  ctx.fillText("윤리와 사상 구조학습 카드", 130, y);
+
+  y += 60;
+  ctx.fillStyle = "#1F2933";
+  ctx.font = "700 52px 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif";
+  y = drawWrappedText(ctx, topic.title, 130, y, 820, 64);
+
+  y += 15;
+  ctx.strokeStyle = "rgba(80,65,45,0.18)";
+  ctx.beginPath(); ctx.moveTo(130, y); ctx.lineTo(950, y); ctx.stroke();
+
+  const sections = [
+    ["핵심 질문", topic.question],
+    ["핵심 비교 (맹자 vs 순자)", compareText],
+    ["시험 함정", topic.commonTrap],
+    ["한 줄 암기", topic.shortInsight],
+  ] as const;
+
+  for (const [heading, body] of sections) {
+    y += 52;
+    ctx.fillStyle = "#5F6368";
+    ctx.font = "700 32px 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif";
+    ctx.fillText(heading, 130, y);
+    y += 20;
+    ctx.fillStyle = "#1F2933";
+    ctx.font = "500 34px 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif";
+    y = drawWrappedText(ctx, body, 130, y + 28, 820, 48);
+  }
+
+  return await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("canvas.toBlob returned null")), "image/png", 1);
+  });
+}
+
+function drawWrappedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {
+  const words = text.split(" ");
+  let line = "";
+  let currentY = y;
+
+  const flushLine = () => {
+    if (!line) return;
+    ctx.fillText(line, x, currentY);
+    line = "";
+    currentY += lineHeight;
+  };
+
+  for (const word of words) {
+    const testLine = line ? `${line} ${word}` : word;
+    if (ctx.measureText(testLine).width <= maxWidth) {
+      line = testLine;
+      continue;
+    }
+    if (line) flushLine();
+
+    if (ctx.measureText(word).width <= maxWidth) {
+      line = word;
+    } else {
+      let chunk = "";
+      for (const char of word) {
+        const testChunk = chunk + char;
+        if (ctx.measureText(testChunk).width > maxWidth && chunk) {
+          ctx.fillText(chunk, x, currentY);
+          currentY += lineHeight;
+          chunk = char;
+        } else {
+          chunk = testChunk;
+        }
+      }
+      line = chunk;
+    }
+  }
+
+  flushLine();
+  return currentY;
+}
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
 }
 
 function blobToDataUrl(blob: Blob) {
