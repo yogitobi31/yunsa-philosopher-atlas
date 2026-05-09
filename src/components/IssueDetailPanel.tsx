@@ -15,6 +15,7 @@ const nameById = Object.fromEntries(philosophers.map((p) => [p.id, p.name]));
 export function IssueDetailPanel({ topic, compact = false }: Props) {
   const exportCardRef = useRef<HTMLDivElement | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState("");
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const philosopherIds = useMemo(() => topic.relatedPhilosophers.join("-"), [topic]);
   const compareText = useMemo(
@@ -31,16 +32,20 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
 
   const downloadImage = async () => {
     setSaveState("saving");
+    setSaveError("");
     try {
       const node = exportCardRef.current;
       if (!node) throw new Error("Export card ref is null");
+
+      const rect = node.getBoundingClientRect();
+      if (!rect.width || !rect.height) throw new Error(`Export card has invalid size: ${rect.width}x${rect.height}`);
 
       if (document.fonts?.ready) await document.fonts.ready;
       await waitForImages(node);
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
 
-      const blob = await toPngBlob(node, { pixelRatio: 2, width: node.offsetWidth, height: node.offsetHeight });
+      const blob = await toPngBlob(node, { pixelRatio: 2, width: 1080, height: 1350 });
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 
@@ -69,13 +74,15 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
         link.click();
         link.remove();
       }
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
       setSaveState("success");
       showToast("암기카드 이미지가 저장되었습니다.");
     } catch (error) {
       console.error("Image export failed:", error);
       setSaveState("error");
-      showToast("이미지 저장 실패: 개발자 도구 콘솔에서 원인을 확인해 주세요.");
+      const message = error instanceof Error ? error.message : String(error);
+      setSaveError(message);
+      showToast(`이미지 저장 실패: ${message}`);
     }
   };
 
@@ -88,30 +95,31 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
   ];
 
   return (
-    <article className={`premium-card relative ${compact ? "p-5" : "p-6 md:p-7"}`}>
+    <article className={`premium-card glass relative ${compact ? "p-5" : "p-6 md:p-7"}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="eyebrow">Step Card Flow</p>
-        <button disabled={saveState === "saving"} onClick={downloadImage} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:border-cyan-200/60 disabled:cursor-not-allowed disabled:opacity-55">
+        <button disabled={saveState === "saving"} onClick={downloadImage} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 text-sm text-[color:var(--text-main)] hover:border-cyan-200/60 disabled:cursor-not-allowed disabled:opacity-55">
           ⬇ {saveState === "saving" ? "저장 중..." : saveState === "success" ? "저장 완료" : saveState === "error" ? "저장 실패" : "이미지로 저장"}
         </button>
       </div>
 
-      <div className="step-card-row mt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="step-card-flow mt-4"><div className="step-card-row mt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {steps.map((step, idx) => (
-          <section key={step.title} className="step-card rounded-3xl border border-white/15 bg-gradient-to-b from-[#111a2f] to-[#0d1324] p-6 shadow-[0_20px_50px_rgba(2,6,18,.45)]">
-            <p className="text-xs tracking-[0.16em] text-cyan-100/85">{step.title}</p>
-            <p className="mt-4 text-[clamp(1rem,4.1vw,1.18rem)] leading-[1.75] text-slate-100 [word-break:keep-all] break-words">{step.body}</p>
-            <p className="mt-6 text-xs text-slate-400">{idx + 1} / 5</p>
+          <section key={step.title} className="step-card rounded-3xl border border-white/15 bg-gradient-to-b from-[#fffdf8] to-[#faf4e8] p-6 shadow-[0_16px_40px_rgba(80,65,45,.12)]">
+            <p className="text-xs tracking-[0.16em] text-[color:var(--text-soft)]">{step.title}</p>
+            <p className="mt-4 text-[clamp(1rem,4.1vw,1.18rem)] leading-[1.75] text-[color:var(--text-main)] [word-break:keep-all] break-words">{step.body}</p>
+            <p className="mt-6 text-xs text-[color:var(--text-soft)]">{idx + 1} / 5</p>
           </section>
         ))}
-      </div>
+      </div></div>
 
-      <div className="export-capture-stage" aria-hidden>
+      <div className="export-card-stage" aria-hidden>
         <MemorizationExportCard ref={exportCardRef} topic={topic} />
       </div>
 
-      {!compact && <div className="mt-6"><p className="text-sm font-medium text-slate-100">관련 철학자</p><div className="mt-3 flex flex-wrap gap-2">{topic.relatedPhilosophers.map((id) => <Link key={id} href={`/philosophers/${id}`} className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-slate-100 hover:border-white/35">{nameById[id] ?? id}</Link>)}</div></div>}
-      {toast && <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/15 bg-slate-950/90 px-4 py-2 text-xs text-slate-100">{toast}</div>}
+      {!compact && <div className="mt-6"><p className="text-sm font-medium text-[color:var(--text-main)]">관련 철학자</p><div className="mt-3 flex flex-wrap gap-2">{topic.relatedPhilosophers.map((id) => <Link key={id} href={`/philosophers/${id}`} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-1.5 text-sm text-[color:var(--text-main)] hover:border-white/35">{nameById[id] ?? id}</Link>)}</div></div>}
+      {saveError && <p className="mt-3 text-xs text-[#a34343]">이미지 저장 실패: {saveError}</p>}
+      {toast && <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 text-xs text-[color:var(--text-main)]">{toast}</div>}
     </article>
   );
 }
