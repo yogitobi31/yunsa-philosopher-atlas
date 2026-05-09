@@ -10,9 +10,13 @@ type Props = { topic: IssueTopic; compact?: boolean };
 const nameById = Object.fromEntries(philosophers.map((p) => [p.id, p.name]));
 
 export function IssueDetailPanel({ topic, compact = false }: Props) {
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const exportCardRef = useRef<HTMLDivElement | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const philosopherIds = useMemo(() => topic.relatedPhilosophers.join("-"), [topic]);
+  const compareText = useMemo(
+    () => topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / "),
+    [topic.comparePairs],
+  );
 
   const fileName = `ethics-card_${slug(philosopherIds)}_${slug(topic.id)}.png`;
 
@@ -22,10 +26,10 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
   };
 
   const downloadImage = async () => {
-    if (!cardRef.current) return;
+    if (!exportCardRef.current) return;
     showToast("암기카드 이미지를 만드는 중…");
     try {
-      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 3, width: 1080, height: 1350 });
+      const dataUrl = await toPng(exportCardRef.current, { cacheBust: true, pixelRatio: 3, width: 1080, height: 1350 });
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 
       if (isIOS) {
@@ -47,76 +51,55 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
     }
   };
 
+  const steps = [
+    { title: "CARD 1 · 핵심 질문", body: topic.question },
+    { title: "CARD 2 · 맹자 vs 순자 핵심 비교", body: compareText },
+    { title: "CARD 3 · 시험 함정 포인트", body: topic.commonTrap },
+    { title: "CARD 4 · 한 줄 암기", body: topic.shortInsight },
+    { title: "CARD 5 · 저장용 프리미엄 카드", body: "아래 저장 버튼으로 SNS 공유용 카드 생성" },
+  ];
+
   return (
     <article className={`premium-card relative ${compact ? "p-5" : "p-6 md:p-7"}`}>
-      <div className="mb-4 rounded-2xl border border-cyan-100/20 bg-cyan-100/5 p-3 text-xs text-cyan-50">
-        이 카드는 시험 전 빠르게 복습할 수 있는 암기 이미지로 저장할 수 있어요.
-      </div>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <p className="eyebrow">질문 → 논점 → 비교</p>
-        <button onClick={downloadImage} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-xs text-white hover:border-cyan-200/60">
+        <p className="eyebrow">Step Card Flow</p>
+        <button onClick={downloadImage} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:border-cyan-200/60">
           ⬇ 이미지로 저장
         </button>
       </div>
-      <p className="text-xs text-slate-300">모바일 프리미엄 암기카드 레이아웃 그대로 이미지로 저장됩니다.</p>
 
-      <div className="mt-4 overflow-x-hidden px-1">
-        <div
-          ref={cardRef}
-          className="mx-auto flex aspect-[4/5] w-full max-w-[420px] flex-col rounded-[26px] border border-slate-400/45 bg-gradient-to-b from-[#0f172c] via-[#11192b] to-[#151b28] p-5 shadow-[0_24px_80px_rgba(4,10,25,0.5)] md:max-w-[720px] md:p-7"
-        >
-          <h3 className="text-xl font-semibold tracking-tight text-white md:text-2xl">{topic.title}</h3>
+      <div className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-[calc(1rem+env(safe-area-inset-bottom))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {steps.map((step, idx) => (
+          <section
+            key={step.title}
+            className="min-w-full snap-center rounded-3xl border border-white/15 bg-gradient-to-b from-[#111a2f] to-[#0d1324] p-6 shadow-[0_20px_50px_rgba(2,6,18,.45)]"
+          >
+            <p className="text-xs tracking-[0.16em] text-cyan-100/85">{step.title}</p>
+            <p className="mt-4 text-[clamp(1rem,4.1vw,1.18rem)] leading-[1.75] text-slate-100 [word-break:keep-all] break-words">{step.body}</p>
+            <p className="mt-6 text-xs text-slate-400">{idx + 1} / 5</p>
+          </section>
+        ))}
+      </div>
 
-          <div className="mt-4 space-y-3 md:hidden">
-            <Section title="메인 질문" value={topic.title} emphasis />
-            <Section title="핵심 질문" value={topic.question} />
-            <Section title="논점 핵심" value={topic.keyContrast} />
-            <Section title="시험 포인트" value={topic.examPoint} />
-            <Section title="시험 함정" value={topic.commonTrap} />
-            <Section title="대표 주장" value={topic.shortInsight} />
-            <Section
-              title="비교 철학자"
-              value={topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / ")}
-            />
+      <div className="sr-only" aria-hidden>
+        <div ref={exportCardRef} className="flex aspect-[4/5] w-[1080px] flex-col rounded-[42px] border border-slate-500/40 bg-gradient-to-b from-[#0a0f1d] via-[#10192e] to-[#0e1528] p-16 text-white">
+          <p className="text-[28px] tracking-[0.2em] text-cyan-100/90">ETHICS PREMIUM CARD</p>
+          <h3 className="mt-6 text-6xl font-semibold leading-[1.25] [word-break:keep-all]">{topic.question}</h3>
+          <div className="mt-10 space-y-7 text-3xl leading-[1.55] text-slate-100">
+            <p><span className="text-cyan-200">핵심 대비</span> · {compareText}</p>
+            <p><span className="text-cyan-200">한 줄 암기</span> · {topic.shortInsight}</p>
+            <p><span className="text-cyan-200">철학자 키워드</span> · {topic.relatedPhilosophers.map((id) => nameById[id] ?? id).join(" · ")}</p>
           </div>
-
-          <div className="mt-4 hidden md:block">
-            <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-base leading-relaxed text-slate-100">Q. {topic.question}</p>
-            <div className="mt-4 grid gap-3 md:grid-cols-2"><Info title="논점 핵심" value={topic.keyContrast} /><Info title="시험 포인트" value={topic.examPoint} /><Info title="시험 함정" value={topic.commonTrap} /></div>
-            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-xs tracking-[0.18em] text-slate-400">대표 주장 · 비교 철학자</p>
-              <p className="mt-2 text-sm text-slate-100">대표 주장: {topic.shortInsight}</p>
-              <p className="mt-1 text-sm text-slate-200">비교 철학자: {topic.comparePairs.map((pair) => `${nameById[pair.a] ?? pair.a} vs ${nameById[pair.b] ?? pair.b}`).join(" / ")}</p>
-            </div>
-          </div>
-
-          <div className="mt-auto border-t border-white/10 pt-3 text-center text-[11px] tracking-[0.14em] text-slate-400">윤리와 사상 구조학습 카드</div>
         </div>
       </div>
 
       {!compact && <div className="mt-6"><p className="text-sm font-medium text-slate-100">관련 철학자</p><div className="mt-3 flex flex-wrap gap-2">{topic.relatedPhilosophers.map((id) => <Link key={id} href={`/philosophers/${id}`} className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-slate-100 hover:border-white/35">{nameById[id] ?? id}</Link>)}</div></div>}
-      {toast && <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/15 bg-slate-950/90 px-4 py-2 text-xs text-slate-100">{toast}</div>}
+      {toast && <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/15 bg-slate-950/90 px-4 py-2 text-xs text-slate-100">{toast}</div>}
     </article>
   );
 }
 
-function Info({ title, value }: { title: string; value: string }) {
-  return <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"><p className="text-xs tracking-[0.12em] text-slate-400">{title}</p><p className="mt-2 text-sm leading-relaxed text-slate-100">{value}</p></div>;
-}
-
-function Section({ title, value, emphasis = false }: { title: string; value: string; emphasis?: boolean }) {
-  return (
-    <section className="border-b border-white/10 pb-3 last:border-b-0">
-      <p className="text-[11px] font-medium tracking-[0.16em] text-cyan-100/85">{title}</p>
-      <p className={`mt-2 leading-[1.72] ${emphasis ? "text-[17px] font-semibold text-white" : "text-[15px] text-slate-100"}`}>
-        {value}
-      </p>
-    </section>
-  );
-}
-
 function slug(text: string) { return text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9가-힣-]/g, ""); }
-
 
 function openImageFallback(dataUrl: string, fileName: string) {
   const win = window.open("_blank", "noopener,noreferrer");

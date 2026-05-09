@@ -8,11 +8,25 @@ export type ToPngOptions = {
 export async function toPng(node: HTMLElement, options: ToPngOptions = {}) {
   const width = options.width ?? 1080;
   const height = options.height ?? 1350;
-  const pixelRatio = options.pixelRatio ?? 2;
+  const pixelRatio = Math.min(Math.max(options.pixelRatio ?? 2, 2), 3);
+
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.left = "-99999px";
+  wrapper.style.top = "0";
+  wrapper.style.width = `${width}px`;
+  wrapper.style.height = `${height}px`;
+  wrapper.style.opacity = "0";
+  wrapper.style.pointerEvents = "none";
 
   const clone = node.cloneNode(true) as HTMLElement;
   clone.style.width = `${width}px`;
   clone.style.height = `${height}px`;
+  clone.style.maxWidth = "none";
+  clone.style.transform = "none";
+
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
 
   const serializer = new XMLSerializer();
   const xhtml = serializer.serializeToString(clone);
@@ -37,12 +51,13 @@ export async function toPng(node: HTMLElement, options: ToPngOptions = {}) {
     if (!ctx) throw new Error("canvas not supported");
 
     ctx.scale(pixelRatio, pixelRatio);
-    ctx.fillStyle = "#0f172a";
+    ctx.fillStyle = "#0a1020";
     ctx.fillRect(0, 0, width, height);
     ctx.drawImage(image, 0, 0, width, height);
 
     return canvas.toDataURL("image/png");
   } finally {
     URL.revokeObjectURL(url);
+    wrapper.remove();
   }
 }
