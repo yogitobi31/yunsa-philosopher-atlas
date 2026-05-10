@@ -117,10 +117,10 @@ export function AtlasSection() {
   };
 
   return <section id="atlas" className="section-shell pb-24"><p className="eyebrow">Philosopher Atlas</p><h2 className="section-title mt-2">철학자 구조 학습 카드</h2>
-    <div className="mt-4 flex flex-wrap gap-2">{([ ["summary", "요약 보기"], ["detail", "상세 보기"], ["saved", "저장한 카드"], ] as const).map(([key, label]) => <button key={key} onClick={() => setViewMode(key)} className={`rounded-full border px-4 py-2 text-sm ${viewMode === key ? "border-cyan-200 bg-cyan-400/20 text-cyan-100" : "border-white/20 text-slate-200"}`}>{label}</button>)}</div>
-    <div className="mt-4 flex flex-wrap gap-2">{regionFilters.map((f) => <button key={f} onClick={() => setCategory(f)} className={`rounded-xl border px-3 py-2 text-sm ${category === f ? "border-cyan-200 bg-cyan-400/20" : "border-white/20"}`}>{f}</button>)}</div>
-    <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="이름/키워드 검색" className="mt-4 w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2" />
-    <p className="mt-3 text-sm text-slate-300">현재 표시 카드 수: {visibleList.length}명의 철학자</p>
+    <div className="mt-4 flex flex-wrap gap-2.5">{([ ["summary", "요약 보기"], ["detail", "상세 보기"], ["saved", "저장한 카드"], ] as const).map(([key, label]) => <button key={key} onClick={() => setViewMode(key)} className={`rounded-full border px-4 py-2 text-sm transition ${viewMode === key ? "border-[rgba(83,107,79,.34)] bg-[#c9dfc0] text-[#324b37]" : "border-[rgba(17,24,39,.14)] bg-[#f8f6f2] text-[rgba(17,24,39,.68)]"}`}>{label}</button>)}</div>
+    <div className="mt-4 flex flex-wrap gap-2.5">{regionFilters.map((f) => <button key={f} onClick={() => setCategory(f)} className={`rounded-xl border px-3 py-2 text-sm transition ${category === f ? "border-[rgba(83,107,79,.34)] bg-[#c9dfc0] text-[#324b37]" : "border-[rgba(17,24,39,.14)] bg-[#f8f6f2] text-[rgba(17,24,39,.68)]"}`}>{f}</button>)}</div>
+    <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="이름/키워드 검색" className="mt-4 w-full rounded-xl border border-[rgba(17,24,39,.14)] bg-[rgba(255,255,255,.72)] px-3 py-2 text-[rgba(17,24,39,.74)] placeholder:text-[rgba(17,24,39,.5)]" />
+    <p className="mt-3 text-sm text-[rgba(17,24,39,.56)]">현재 표시 카드 수: {visibleList.length}명의 철학자</p>
 
     {viewMode === "saved" && visibleList.length === 0 ? <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-slate-300">아직 저장한 카드가 없습니다.</div> : (
       <div className={`philosopher-grid mt-6 grid gap-4 ${viewMode === "saved" ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2"}`}>

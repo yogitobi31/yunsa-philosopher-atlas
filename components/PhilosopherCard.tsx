@@ -25,8 +25,8 @@ export function PhilosopherCard({ philosopher, expanded, compact = false, saved,
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs tracking-[0.16em] text-[color:var(--text-soft)]">{philosopher.category} · {philosopher.tradition}</p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-[color:var(--text-main)]">{philosopher.name}</h3>
-          <p className="mt-2 text-sm text-[#374151]">{philosopher.oneLineSummary}</p>
+          <h3 className="mt-2 text-2xl font-bold tracking-tight text-[color:var(--text-main)]">{philosopher.name}</h3>
+          <p className="mt-2 text-sm text-[#2f3b48]">{philosopher.oneLineSummary}</p>
         </div>
         <button onClick={onToggleSave} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-1.5 text-xs text-[color:var(--text-main)] transition hover:border-[var(--philo-accent)]">
           {saved ? "♥ 저장됨" : "♡ 저장"}
@@ -40,7 +40,7 @@ export function PhilosopherCard({ philosopher, expanded, compact = false, saved,
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-2 border-t border-[color:var(--line)] pt-3">
-        <p className="text-xs text-[#6B6258]">핵심 흐름: {philosopher.coreFlow.join(" → ")}</p>
+        <p className="text-xs text-[#5f564b]">핵심 흐름: {philosopher.coreFlow.join(" → ")}</p>
         <button onClick={onToggleExpand} className="rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-1.5 text-xs text-[color:var(--text-main)] transition hover:border-[var(--philo-accent)]">
           {expanded ? "접기" : "자세히"}
         </button>
