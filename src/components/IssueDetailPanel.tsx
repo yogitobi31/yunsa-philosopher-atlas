@@ -23,11 +23,11 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
   const fileName = `ethics-card_${slug(philosopherIds)}_${slug(topic.id)}.png`;
 
   const steps = [
-    { title: "CARD 1 · 핵심 질문", body: topic.question },
-    { title: "CARD 2 · 맹자 vs 순자 핵심 비교", body: compareText },
-    { title: "CARD 3 · 시험 함정 포인트", body: topic.commonTrap },
-    { title: "CARD 4 · 한 줄 암기", body: topic.shortInsight },
-    { title: "CARD 5 · 저장 안내", body: "아래 저장 버튼으로 SNS 공유용 카드 생성" },
+    { title: "STEP 1 · 철학자 한 줄 소개", body: topic.question },
+    { title: "STEP 2 · 핵심 키워드 3개", body: topic.keyContrast },
+    { title: "STEP 3 · 헷갈리는 비교 대상 1명", body: topic.commonTrap },
+    { title: "STEP 4 · 암기카드 자동 생성", body: "아래 미리보기 카드를 바로 이미지로 저장할 수 있습니다." },
+    { title: "STEP 5 · 짧은 확인 문제 1개", body: topic.examPoint },
   ];
 
   const showToast = (text: string) => {
@@ -72,11 +72,12 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
   return (
     <article className={`premium-card glass relative ${compact ? "p-5" : "p-6 md:p-7"}`}>
       <div className="step-card-header mb-3">
-        <p className="eyebrow">Step Card Flow</p>
+        <p className="eyebrow">오늘의 3분 학습</p>
         <button disabled={saveState === "saving"} onClick={downloadImage} className="save-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-2 text-sm text-[color:var(--text-main)] hover:border-cyan-200/60 disabled:cursor-not-allowed disabled:opacity-55">
-          ⬇ {saveState === "saving" ? "저장 중..." : saveState === "success" ? "저장 완료" : saveState === "error" ? "저장 실패" : "이미지로 저장"}
+          ⬇ {saveState === "saving" ? "저장 중..." : saveState === "success" ? "저장 완료" : saveState === "error" ? "저장 실패" : "암기카드 이미지로 저장"}
         </button>
       </div>
+      <p className="text-xs text-[color:var(--text-soft)]">휴대폰에 저장해서 시험 전에 다시 보기</p>
 
       <div className="step-card-flow mt-4">
         <div className="step-card-pager">
@@ -97,12 +98,12 @@ export function IssueDetailPanel({ topic, compact = false }: Props) {
 
 
       <div className="mt-6 rounded-[24px] border border-[color:var(--line)] bg-[linear-gradient(180deg,#FFFDF8_0%,#FAF4E8_100%)] p-4 md:p-5">
-        <p className="eyebrow">윤사 구조학습 카드</p>
+        <p className="eyebrow">한눈에 이해 카드</p>
         <h3 className="mt-2 text-xl font-semibold text-[#1F2933]">{topic.title}</h3>
         <div className="study-card-grid mt-4 grid gap-3 md:grid-cols-2">
-          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3"><p className="text-xs text-[#6B6258]">메인 질문</p><p className="mt-1 text-sm text-[#374151]">{topic.question}</p></section>
-          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3"><p className="text-xs text-[#6B6258]">핵심 질문</p><p className="mt-1 text-sm text-[#374151]">{topic.shortInsight}</p></section>
-          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">비교 포인트</p><p className="mt-1 text-sm text-[#374151]">{compareText}</p></section>
+          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3"><p className="text-xs text-[#6B6258]">철학자 한 줄 소개</p><p className="mt-1 text-sm text-[#374151]">{topic.question}</p></section>
+          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3"><p className="text-xs text-[#6B6258]">핵심 키워드</p><p className="mt-1 text-sm text-[#374151]">{topic.shortInsight}</p></section>
+          <section className="rounded-2xl border border-[rgba(80,65,45,.14)] bg-white/70 p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">헷갈리는 사상가 비교</p><p className="mt-1 text-sm text-[#374151]">{compareText}</p></section>
           <section className="rounded-2xl border border-[rgba(138,90,43,.22)] bg-[rgba(138,90,43,.08)] p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">시험 함정</p><p className="mt-1 text-sm text-[#8A5A2B]">{topic.commonTrap}</p></section>
           <section className="rounded-2xl border border-[rgba(83,107,79,.24)] bg-[rgba(83,107,79,.08)] p-3 md:col-span-2"><p className="text-xs text-[#6B6258]">한 줄 암기</p><p className="mt-1 text-sm text-[#374151]">{topic.shortInsight}</p></section>
         </div>
@@ -151,7 +152,7 @@ async function createMemorizationPng(topic: IssueTopic, compareText: string) {
   ctx.beginPath(); ctx.moveTo(130, y); ctx.lineTo(950, y); ctx.stroke();
 
   const sections = [
-    ["핵심 질문", topic.question],
+    ["핵심 키워드", topic.question],
     ["핵심 비교 (맹자 vs 순자)", compareText],
     ["시험 함정", topic.commonTrap],
     ["한 줄 암기", topic.shortInsight],
